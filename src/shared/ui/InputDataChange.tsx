@@ -9,15 +9,18 @@ interface IProps {
     error?: string;
     secureTextEntry?: boolean;
     type: 'labelUp' | 'labelDown';
+    comment?: string;
 }
 
 export const InputDataChange = ({
+                            comment,
                           placeholder,
                           value,
                           onChangeText,
                           secureTextEntry,
                           error,
                           type,
+
                       }: IProps) => {
     const textColor = error ? '#FF5D54' : '#5c595973';
     const isLabelUp = type === 'labelUp';
@@ -36,10 +39,14 @@ export const InputDataChange = ({
                     secureTextEntry={secureTextEntry}
                 />
             </View>
-            {!!error && (
+            {!!error ? (
                 <Text
                     style={[styles.labelDown, styles.marginBottom8, {color: textColor}]}>
                     {error ? error : placeholder}
+                </Text>
+            ):(
+                <Text style={[styles.penis, { color: textColor }]}>
+                    {comment}
                 </Text>
             )}
         </>
@@ -74,6 +81,11 @@ const styles = StyleSheet.create({
     marginBottom8: {
         marginBottom: 10,
     },
+    penis:{
+        marginTop: -11,
+        marginBottom: 8,
+        fontSize: 12,
+    },
     inputDown: {
         color: '#EDEFF2',
         height: 20,
@@ -99,6 +111,7 @@ const styles = StyleSheet.create({
     labelDown: {
         marginTop: 5,
         fontSize: 12,
+
     },
     error: {
         borderWidth: 1,

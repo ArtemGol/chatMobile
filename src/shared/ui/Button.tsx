@@ -74,7 +74,7 @@ const buttonStyle = StyleSheet.create({
         borderRadius: 5,
         marginTop: 15,
         width: '100%',
-        height: 40,
+        height: 45,
         justifyContent: 'center',
         alignItems: 'center',
     } as ViewStyle,
@@ -86,7 +86,7 @@ const buttonStyle = StyleSheet.create({
     } as ViewStyle,
     create: {
         backgroundColor: '#FFFFFF',
-        width: '50%',
+        width: 200,
     } as ViewStyle,
     disabled: {
         backgroundColor: '#5456591A',
@@ -101,10 +101,11 @@ const textStyle = StyleSheet.create({
         color: '#FFFFFF'
     } as TextStyle,
     dark: {
-        color: '#000000E5'
+        color: '#000000E5',
     } as TextStyle,
     error: {
-        color: '#FF5D54'
+        color: '#FF5D54',
+        fontWeight: "500"
     } as TextStyle,
     s: {
         fontSize: 15
@@ -115,3 +116,4 @@ const textStyle = StyleSheet.create({
 });
 
 export default Button;
+

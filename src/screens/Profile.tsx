@@ -1,5 +1,5 @@
 // Profile.js
-import React, {useRef, useState} from 'react';
+import React, {useCallback, useRef, useState} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -13,6 +13,10 @@ import type {Socket} from 'socket.io-client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Button, {ButtonTheme, TextSize, TextTheme} from "../shared/ui/Button.tsx";
 
+import ModalWindow from "../wighets/Modal.tsx";
+
+
+
 function Profile() {
   const {username, phone, email} = useSelector(userSelector);
   const connection = useSelector(connectionSelector);
@@ -21,6 +25,8 @@ function Profile() {
   const navigation = useNavigation<any>();
   const socketRef = useRef<Socket | null>(connection);
 
+  const [showModal, setShowModal] = useState(false)
+
   const handleLogout = () => {
     dispatch(channelAction.clearChannelsWithMessages());
     dispatch(authAction.logout());
@@ -28,23 +34,18 @@ function Profile() {
     AsyncStorage.clear();
   };
 
+
   return (
     <View style={styles.container}>
       <View style={styles.innercontainer}>
-        <Text style={styles.mainheader}>{username}</Text>
-        <Text style={styles.status}>в сети</Text>
-        <View style={styles.section}>
-          <Text style={styles.label}>никнейм</Text>
-          <Text style={styles.content}>{username}</Text>
+        <View style={styles.round}>
+          <Text style={styles.firstLetter}>{username.charAt(0).toUpperCase()}</Text>
         </View>
-        <View style={styles.section}>
-          <Text style={styles.label}>номер телефона</Text>
-          <Text style={styles.content}>{phone}</Text>
+        <View style={styles.dataBlock}>
+          <Text style={styles.username}>{username}</Text>
+          <Text style={styles.phone}>{phone}</Text>
         </View>
-        <View style={styles.section}>
-          <Text style={styles.label}>email</Text>
-          <Text style={styles.content}>{email}</Text>
-        </View>
+
         <TouchableOpacity
           style={styles.messageButton}
           onPress={() =>
@@ -67,17 +68,27 @@ function Profile() {
           />
           <Text style={styles.messageButtonText}>изменить пароль</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.messageButton} onPress={handleLogout}>
+        <TouchableOpacity style={styles.messageButton} onPress={() => setShowModal(true)}>
           <Ionicons style={styles.iconStyle} name="exit-outline" size={24} />
           <Text style={styles.messageButtonText}>Выйти</Text>
         </TouchableOpacity>
-        <Button
-            title={"Добавить"}
-            theme={ButtonTheme.CREATE}
-            disabled={false}
-            textTheme={TextTheme.DARK}
-        />
       </View>
+      {showModal && (
+          <ModalWindow title={'Выйти из аккаунта?'}>
+            <Button
+                title={'Выход'}
+                theme={ButtonTheme.LOGOUT}
+                textTheme={TextTheme.ERROR}
+                textSize={TextSize.S}
+                onPress={handleLogout}
+            />
+            <Button
+                title={'Отмена'}
+                textSize={TextSize.S}
+                onPress={() => setShowModal(false)}
+            />
+          </ModalWindow>
+      )}
     </View>
   );
 }
@@ -86,12 +97,40 @@ const styles = StyleSheet.create({
   iconStyle: {
     color: '#000',
   },
+  round:{
+    backgroundColor: '#E4E4E4',
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  firstLetter:{
+    fontSize: 48,
+    color: '#00000033'
+  },
+  dataBlock:{
+    alignItems: 'center',
+    marginTop: 5,
+    marginBottom: 40
+  },
+  username: {
+    fontSize: 26,
+    color: '#000000E5',
+    fontWeight: '500'
+  },
+  phone: {
+    color: '#8E8E93',
+    fontSize: 16
+  },
+
   container: {
     flex: 1,
-    backgroundColor: '#FFF',
-    paddingTop: 100,
+    backgroundColor: '#F7F7F7',
+    paddingTop: 20,
   },
   innercontainer: {
+    alignItems: 'center',
     paddingLeft: 15,
     paddingRight: 15,
   },
@@ -125,12 +164,12 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   messageButton: {
-    marginBottom: 7,
+    marginBottom: 10,
     paddingLeft: 10,
     color: '#000000A1',
     width: '100%',
     flexDirection: 'row',
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#FFFFFF',
     paddingVertical: 12,
     borderRadius: 4,
     alignItems: 'center',

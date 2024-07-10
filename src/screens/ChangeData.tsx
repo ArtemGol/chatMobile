@@ -13,6 +13,7 @@ import {validationFunk} from '../assets/utils/validationFunk.ts';
 import {authApi} from '../api/authApi.ts';
 import {useNavigation} from '@react-navigation/native';
 import {useAppDispatch} from '../store';
+import Button from "../shared/ui/Button.tsx";
 
 const ChangeData = () => {
   const dispatch = useAppDispatch();
@@ -83,6 +84,7 @@ const ChangeData = () => {
         />
         <InputDataChange
           placeholder={'номер телефона'}
+          comment={'Не обязательно для заполнения'}
           error={phoneError}
           type={'labelUp'}
           value={phone}
@@ -93,6 +95,7 @@ const ChangeData = () => {
         />
         <InputDataChange
           placeholder={'email'}
+          comment={'По email можно восстановить доступ к аккаунту.                      Не обязательно для заполнения'}
           error={emailError}
           type={'labelUp'}
           value={email}
@@ -101,10 +104,11 @@ const ChangeData = () => {
             setEmailError('');
           }}
         />
-        <ButtonLogin
-          disabled={isDisable}
-          title={'Изменить данные'}
-          onPress={handleChange}
+
+        <Button
+            title={'Изменить'}
+            disabled={isDisable}
+            onPress={handleChange}
         />
       </View>
     </View>

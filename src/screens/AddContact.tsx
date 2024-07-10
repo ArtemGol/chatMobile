@@ -8,6 +8,8 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ButtonLogin from '../components/ButtonLogin'; // Импортируем кнопку "Добавить контакт"
+import {Input} from "../components/Input.tsx";
+import Button, {ButtonTheme, TextSize, TextTheme} from "../shared/ui/Button.tsx";
 
 import {useNavigation} from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -22,6 +24,7 @@ function AddContact() {
 
   useEffect(() => {
     const getJwtToken = async () => {
+
       try {
         const token = await AsyncStorage.getItem('user_data');
         if (token !== null) {
@@ -37,6 +40,7 @@ function AddContact() {
   }, []);
 
   const checkContact = async () => {
+
     if (nickname.trim() === '' && phoneNumber.trim() === '') {
       setContactExists(null);
       return;
@@ -104,38 +108,41 @@ function AddContact() {
     contactExists === null;
 
   return (
-    <View style={{backgroundColor: 'white', flex: 1, alignItems: 'center'}}>
+    <View style={{backgroundColor: '#F7F7F7', flex: 1, alignItems: 'center'}}>
       <View style={{width: '90%', paddingTop: 60}}>
-        <View style={styles.section}>
-          <Text style={styles.label}>никнейм</Text>
-          <TextInput
-            style={styles.content}
-            placeholder="Введите никнейм"
+        {contactExists === true && (
+            <View style={{ alignItems: 'center', marginBottom: 20}}>
+              <View style={styles.round}>
+                <Text style={styles.firstLetter}>{nickname.charAt(0).toUpperCase()}</Text>
+              </View>
+            </View>
+        )}
+        <Input
+            type={'labelUp'}
+            placeholder={'никнейм'}
+            innerPlaceholder={'Введите никнейм'}
             value={nickname}
             onChangeText={text => setNickname(text)}
-          />
-        </View>
-        <View style={styles.section}>
-          <Text style={styles.label}>номер телефона</Text>
-          <TextInput
-            style={styles.content}
-            placeholder="Введите номер телефона"
+        />
+        <Input
+            type={'labelUp'}
+            placeholder={'номер телефона'}
+            innerPlaceholder={'Введите номер телефона'}
             value={phoneNumber}
             onChangeText={text => setPhoneNumber(text)}
-          />
-        </View>
+        />
         {contactExists === true && (
-          <>
-            <TouchableOpacity style={styles.messageButton}>
-              <Ionicons name="chatbox-outline" size={24} />
-              <Text style={styles.messageButtonText}>Сообщение</Text>
-            </TouchableOpacity>
-            <ButtonLogin
-              title={'Добавить контакт'}
-              onPress={addContact}
-              disabled={isButtonDisabled}
-            />
-          </>
+            <>
+              <TouchableOpacity style={styles.messageButton}>
+                <Ionicons name="chatbox-outline" size={24} />
+                <Text style={styles.messageButtonText}>Сообщение</Text>
+              </TouchableOpacity>
+              <Button
+                  title={'Добавить'}
+                  onPress={addContact}
+                  disabled={isButtonDisabled}
+              />
+            </>
         )}
         {contactExists === false && (
           <Text style={{color: '#0000004D'}}>Такой пользователь не найден</Text>
@@ -164,12 +171,12 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   messageButton: {
-    marginTop: 10,
+    marginBottom: 10,
     paddingLeft: 10,
     color: '#000000A1',
     width: '100%',
     flexDirection: 'row',
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#FFFFFF',
     paddingVertical: 12,
     borderRadius: 4,
     alignItems: 'center',
@@ -179,6 +186,18 @@ const styles = StyleSheet.create({
     color: '#000000E5',
     fontSize: 16,
     paddingLeft: 10,
+  },
+  round:{
+    backgroundColor: '#E4E4E4',
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  firstLetter:{
+    fontSize: 48,
+    color: '#00000033'
   },
 });
 

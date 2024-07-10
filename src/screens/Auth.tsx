@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
-import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import ButtonLogin from '../components/ButtonLogin';
 import {Input} from '../components/Input.tsx';
 import {useLoginAndFetchUserMutation} from '../api/authApi.ts';
 import {validationFunk} from '../assets/utils/validationFunk.ts';
@@ -10,7 +9,7 @@ import {useAppDispatch} from '../store';
 import {channelAction} from '../store/channel/channelSlice.ts';
 import {generateID} from '../assets/constants/generatedId.ts';
 
-import Button, {ButtonTheme} from "../shared/ui/Button.tsx";
+import Button, {ButtonTheme, TextSize, TextTheme} from "../shared/ui/Button.tsx";
 
 const AuthScreen = () => {
   const dispatch = useAppDispatch();
@@ -66,17 +65,21 @@ const AuthScreen = () => {
         <View style={styles.insideBlock}>
           <Input
             type={'labelDown'}
-            placeholder="Username"
+            // placeholder="Username"
+            innerPlaceholder={'Ваш никнейм'}
             value={username}
             onChangeText={text => {
               setUsername(text);
               setNicknameError('');
             }}
             error={nicknameError}
+
           />
           <Input
             type={'labelDown'}
-            placeholder="Password"
+            // placeholder="Password"
+            innerPlaceholder={'Пароль'}
+            eye={true}
             value={password}
             onChangeText={text => {
               setPassword(text);
@@ -87,13 +90,26 @@ const AuthScreen = () => {
           />
         </View>
 
-        <ButtonLogin onPress={handleLogin} title={'Login'} />
-        <Button title={"title"} theme={ButtonTheme.OUTLINE_RED}/>
-        <TouchableOpacity
-          onPress={() => navigation.navigate('Register')}
-          style={styles.registerButton}>
-          <Text style={styles.registerText}>Register</Text>
-        </TouchableOpacity>
+        {/*<ButtonLogin onPress={handleLogin} title={'Login'} />*/}
+        <Button
+            title={"title"}
+            theme={ButtonTheme.BASE}
+            onPress={handleLogin}
+        />
+        <Button
+            title={"Создать аккаунт"}
+            theme={ButtonTheme.CREATE}
+            textTheme={TextTheme.DARK}
+            textSize={TextSize.S}
+            onPress={() => navigation.navigate('Register')}
+        />
+
+
+        {/*<TouchableOpacity*/}
+        {/*  onPress={() => navigation.navigate('Register')}*/}
+        {/*  style={styles.registerButton}>*/}
+        {/*  <Text style={styles.registerText}>Register</Text>*/}
+        {/*</TouchableOpacity>*/}
       </View>
 
       {/* Отображение отправленных и полученных данных */}
@@ -101,12 +117,15 @@ const AuthScreen = () => {
   );
 };
 
+
+
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 330,
     alignItems: 'center',
-    backgroundColor: 'white',
+    backgroundColor: '#F7F7F7',
   },
   formContainer: {
     alignContent: 'center',

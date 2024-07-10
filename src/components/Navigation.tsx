@@ -4,11 +4,11 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {
-  AppState,
-  AppStateStatus,
-  PermissionsAndroid,
-  StyleSheet,
-  TouchableOpacity,
+    AppState,
+    AppStateStatus,
+    PermissionsAndroid,
+    StyleSheet, Text,
+    TouchableOpacity,
 } from 'react-native';
 
 import Profile from '../screens/Profile';
@@ -50,23 +50,28 @@ function MessageStack() {
       <HomeStack.Screen
         name="Create channel"
         component={ChatPreview}
-        options={{headerTitle: 'Чаты'}}
+        options={{headerTitle: 'Чаты', headerShadowVisible: false,}}
       />
       <HomeStack.Screen
         name="Chat"
         component={ChatDetails}
         options={({navigation}) => ({
           presentation: 'containedModal',
+            headerShadowVisible: false,
           // eslint-disable-next-line react/no-unstable-nested-components
           headerLeft: () => (
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Ionicons
-                name="arrow-back"
-                size={28}
-                color="#5075F6"
-                style={styles.iconRight}
-              />
-            </TouchableOpacity>
+              <TouchableOpacity
+                  onPress={() => navigation.goBack()}
+                  style={styles.backContainer}
+              >
+                  <Ionicons
+                      name="chevron-back-outline"
+                      size={28}
+                      color="#00000099"
+                      // style={styles.iconRight}
+                  />
+                  <Text style={styles.text}>Назад</Text>
+              </TouchableOpacity>
           ),
         })}
       />
@@ -78,16 +83,21 @@ function MessageStack() {
           title: route.params?.userName,
           headerRight: () => <GiftedChatRightHeader isConnected />,
           presentation: 'containedModal',
+            headerShadowVisible: false,
           // eslint-disable-next-line react/no-unstable-nested-components
           headerLeft: () => (
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Ionicons
-                name="arrow-back"
-                size={28}
-                color="#5075F6"
-                style={styles.iconRight}
-              />
-            </TouchableOpacity>
+              <TouchableOpacity
+                  onPress={() => navigation.goBack()}
+                  style={styles.backContainer}
+              >
+                  <Ionicons
+                      name="chevron-back-outline"
+                      size={28}
+                      color="#00000099"
+                      // style={styles.iconRight}
+                  />
+                  <Text style={styles.text}>Чаты</Text>
+              </TouchableOpacity>
           ),
         })}
       />
@@ -101,10 +111,55 @@ function ProfileStack() {
       <HomeStack.Screen
         name="Profile"
         component={Profile}
-        options={{headerTitle: 'Профиль'}}
+        options={{headerTitle: '', headerShadowVisible: false,}}
       />
-      <HomeStack.Screen name="ChangePassword" component={ChangePassword} />
-      <HomeStack.Screen name="ChangeData" component={ChangeData} />
+      <HomeStack.Screen
+          name="ChangePassword"
+          component={ChangePassword}
+          options={({navigation}) => ({
+              headerTitle: 'Смена пароля',
+              headerShadowVisible: false,
+              // eslint-disable-next-line react/no-unstable-nested-components
+              headerLeft: () => (
+                  <TouchableOpacity
+                      onPress={() => navigation.goBack()}
+                      style={styles.backContainer}
+                  >
+                      <Ionicons
+                          name="chevron-back-outline"
+                          size={28}
+                          color="#00000099"
+                          // style={styles.iconRight}
+                      />
+                      <Text style={styles.text}>Назад</Text>
+                  </TouchableOpacity>
+              ),
+          })}
+
+      />
+      <HomeStack.Screen
+          name="ChangeData"
+          component={ChangeData}
+          options={({navigation}) => ({
+              headerTitle: 'Изменить данные',
+              headerShadowVisible: false,
+              // eslint-disable-next-line react/no-unstable-nested-components
+              headerLeft: () => (
+                  <TouchableOpacity
+                      onPress={() => navigation.goBack()}
+                      style={styles.backContainer}
+                  >
+                      <Ionicons
+                          name="chevron-back-outline"
+                          size={28}
+                          color="#00000099"
+                          // style={styles.iconRight}
+                      />
+                      <Text style={styles.text}>Назад</Text>
+                  </TouchableOpacity>
+              ),
+          })}
+      />
     </HomeStack.Navigator>
   );
 }
@@ -118,6 +173,7 @@ function ContactStack() {
         options={({navigation}) => ({
           title: 'Contacts',
           headerTitle: 'Контакты',
+            headerShadowVisible: false,
           // eslint-disable-next-line react/no-unstable-nested-components
           headerRight: () => (
             <TouchableOpacity onPress={() => navigation.navigate('AddContact')}>
@@ -135,17 +191,22 @@ function ContactStack() {
         name="ContactProfile"
         component={ContactProfile}
         options={({navigation}) => ({
+            headerShadowVisible: false,
           presentation: 'containedModal',
           // eslint-disable-next-line react/no-unstable-nested-components
           headerLeft: () => (
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Ionicons
-                name="arrow-back"
-                size={28}
-                color="#5075F6"
-                style={styles.iconRight}
-              />
-            </TouchableOpacity>
+              <TouchableOpacity
+                  onPress={() => navigation.goBack()}
+                  style={styles.backContainer}
+              >
+                  <Ionicons
+                      name="chevron-back-outline"
+                      size={28}
+                      color="#00000099"
+                      // style={styles.iconRight}
+                  />
+                  <Text style={styles.text}>Назад</Text>
+              </TouchableOpacity>
           ),
         })}
       />
@@ -154,16 +215,21 @@ function ContactStack() {
         component={AddContact}
         options={({navigation}) => ({
           presentation: 'containedModal',
+            headerShadowVisible: false,
           // eslint-disable-next-line react/no-unstable-nested-components
           headerLeft: () => (
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Ionicons
-                name="arrow-back"
-                size={28}
-                color="#5075F6"
-                style={styles.iconRight}
-              />
-            </TouchableOpacity>
+              <TouchableOpacity
+                  onPress={() => navigation.goBack()}
+                  style={styles.backContainer}
+              >
+                  <Ionicons
+                      name="chevron-back-outline"
+                      size={28}
+                      color="#00000099"
+                      // style={styles.iconRight}
+                  />
+                  <Text style={styles.text}>Назад</Text>
+              </TouchableOpacity>
           ),
         })}
       />
@@ -476,4 +542,14 @@ const styles = StyleSheet.create({
   iconRight: {
     marginRight: 5,
   },
+    backContainer:{
+      flexDirection: 'row',
+      gap: 0,
+      alignItems: 'center',
+      display: 'flex',
+    },
+    text:{
+      fontWeight: '400',
+      fontSize: 15,
+    }
 });

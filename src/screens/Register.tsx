@@ -72,8 +72,9 @@ const Register = () => {
     <View style={styles.container}>
       <View style={styles.insideBlock}>
         <Input
-          type={'labelDown'}
-          placeholder="Username"
+          type={'labelUp'}
+          innerPlaceholder={'Придумайте ваш никнейм'}
+          placeholder="никнейм"
           value={username}
           onChangeText={text => {
             setUsername(text);
@@ -83,9 +84,11 @@ const Register = () => {
         />
 
         <Input
-          type={'labelDown'}
-          placeholder="Phone"
+          type={'labelUp'}
+          placeholder="номер телефона"
           keyboardType="phone-pad"
+          innerPlaceholder={'Введите номер телефона'}
+          lowerCaption={"Не обязательно для заполнения"}
           value={phone}
           onChangeText={text => {
             setPhone(text);
@@ -95,8 +98,10 @@ const Register = () => {
         />
 
         <Input
-          type={'labelDown'}
-          placeholder="Email"
+          type={'labelUp'}
+          placeholder="email"
+          lowerCaption={"По email можно восстановить доступ к аккаунту.                      Не обязательно для заполнения"}
+          innerPlaceholder={'Введите email'}
           keyboardType="email-address"
           value={email}
           onChangeText={text => {
@@ -108,7 +113,9 @@ const Register = () => {
 
         <Input
           type={'labelDown'}
-          placeholder="Password"
+          eye={true}
+          innerPlaceholder={'Придумайте пароль'}
+
           value={password}
           onChangeText={text => {
             setPassword(text);
@@ -133,6 +140,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   insideBlock: {
+    marginTop: 30,
     width: '90%',
   },
 });

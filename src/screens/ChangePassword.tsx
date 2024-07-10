@@ -57,35 +57,41 @@ function ChangePassword() {
   return (
     <View style={styles.container}>
       <Input
-        placeholder={'old password'}
+        innerPlaceholder={'Введите текущий пароль'}
         error={oldError}
-        type={'labelUp'}
+        eye={true}
+        type={'labelDown'}
         value={oldPassword}
         onChangeText={text => {
           setOldPassword(text);
           setOldError('');
         }}
       />
-      <Input
-        placeholder={'new password'}
-        error={newError}
-        type={'labelUp'}
-        value={newPassword}
-        onChangeText={text => {
-          setNewPassword(text);
-          setNewError('');
-        }}
-      />
-      <Input
-        placeholder={'repeat password'}
-        error={repeatError}
-        type={'labelUp'}
-        value={repeatPassword}
-        onChangeText={text => {
-          setRepeatPassword(text);
-          setRepeatError('');
-        }}
-      />
+        <View style={styles.mt}>
+            <Input
+                innerPlaceholder={'Придумайте новый пароль'}
+                error={newError}
+                eye={true}
+                type={'labelDown'}
+                value={newPassword}
+                onChangeText={text => {
+                    setNewPassword(text);
+                    setNewError('');
+                }}
+
+            />
+            <Input
+                innerPlaceholder={'Повторите новый пароль'}
+                error={repeatError}
+                eye={true}
+                type={'labelDown'}
+                value={repeatPassword}
+                onChangeText={text => {
+                    setRepeatPassword(text);
+                    setRepeatError('');
+                }}
+            />
+        </View>
       <ButtonLogin title={'Изменить пароль'} onPress={handleChange} />
     </View>
   );
@@ -99,6 +105,9 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     paddingRight: 20,
   },
+    mt:{
+      marginTop: 10
+    }
 });
 
 export default ChangePassword;
