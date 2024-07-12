@@ -1,10 +1,12 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, StyleSheet} from 'react-native';
-import ButtonLogin from '../components/ButtonLogin';
+
 import {Input} from '../components/Input';
 import {validationFunk} from '../assets/utils/validationFunk.ts';
 import {useAppDispatch} from '../store';
 import {authApi} from '../api/authApi.ts';
+
+import Button, {ButtonTheme, TextSize, TextTheme} from "../shared/ui/Button.tsx";
 
 function ChangePassword() {
   const dispatch = useAppDispatch();
@@ -15,6 +17,8 @@ function ChangePassword() {
   const [oldError, setOldError] = useState<string>('');
   const [newError, setNewError] = useState<string>('');
   const [repeatError, setRepeatError] = useState<string>('');
+
+  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
   const handleChange = () => {
     const oldPasVal = validationFunk({
@@ -54,6 +58,20 @@ function ChangePassword() {
     }
   };
 
+    useEffect(() => {
+        checkInputs();
+    }, [oldPassword, newPassword, repeatPassword]);
+
+    const checkInputs = () => {
+        if (oldPassword.length > 0 &&
+            newPassword.length > 0 &&
+            repeatPassword.length > 0) {
+            setIsButtonDisabled(false);
+        } else {
+            setIsButtonDisabled(true);
+        }
+    };
+
   return (
     <View style={styles.container}>
       <Input
@@ -92,7 +110,9 @@ function ChangePassword() {
                 }}
             />
         </View>
-      <ButtonLogin title={'Изменить пароль'} onPress={handleChange} />
+        <Button title={'Изменить пароль'} onPress={handleChange} disabled={isButtonDisabled}/>
+
+
     </View>
   );
 }
@@ -101,7 +121,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 150,
-    backgroundColor: 'white',
+    backgroundColor: '#F7F7F7',
     paddingLeft: 20,
     paddingRight: 20,
   },

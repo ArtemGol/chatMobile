@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {StyleSheet, View} from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {StyleSheet, View, Text} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {Input} from '../components/Input.tsx';
 import {useLoginAndFetchUserMutation} from '../api/authApi.ts';
@@ -8,8 +8,10 @@ import {channelApi} from '../api/channelApi.ts';
 import {useAppDispatch} from '../store';
 import {channelAction} from '../store/channel/channelSlice.ts';
 import {generateID} from '../assets/constants/generatedId.ts';
-
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import Button, {ButtonTheme, TextSize, TextTheme} from "../shared/ui/Button.tsx";
+
+
 
 const AuthScreen = () => {
   const dispatch = useAppDispatch();
@@ -19,7 +21,7 @@ const AuthScreen = () => {
 
   const [pasError, setPasError] = useState<string>('');
   const [nicknameError, setNicknameError] = useState<string>('');
-
+  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const navigation = useNavigation<any>();
 
   const handleLogin = async () => {
@@ -59,13 +61,32 @@ const AuthScreen = () => {
     }
   };
 
+  useEffect(() => {
+    checkInputs();
+  }, [username, password]);
+
+  const checkInputs = () => {
+    if (username.length > 0 && password.length > 0) {
+      setIsButtonDisabled(false);
+    } else {
+      setIsButtonDisabled(true);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.formContainer}>
         <View style={styles.insideBlock}>
+          <View style={styles.logoContainer}>
+            <Ionicons
+                style={styles.logo}
+                name="chatbubble-outline"
+                size={20}
+            />
+            <Text style={styles.logoText}>Tet a tet</Text>
+          </View>
           <Input
             type={'labelDown'}
-            // placeholder="Username"
             innerPlaceholder={'Ваш никнейм'}
             value={username}
             onChangeText={text => {
@@ -77,7 +98,6 @@ const AuthScreen = () => {
           />
           <Input
             type={'labelDown'}
-            // placeholder="Password"
             innerPlaceholder={'Пароль'}
             eye={true}
             value={password}
@@ -89,27 +109,24 @@ const AuthScreen = () => {
             secureTextEntry
           />
         </View>
+        <View style={styles.downContainer}>
+          <Button
+              title={"Войти"}
+              theme={ButtonTheme.BASE}
+              onPress={handleLogin}
+              disabled={isButtonDisabled}
+          />
+          <Text style={styles.text}>Еще нет в tet a tet?</Text>
 
-        {/*<ButtonLogin onPress={handleLogin} title={'Login'} />*/}
-        <Button
-            title={"title"}
-            theme={ButtonTheme.BASE}
-            onPress={handleLogin}
-        />
-        <Button
-            title={"Создать аккаунт"}
-            theme={ButtonTheme.CREATE}
-            textTheme={TextTheme.DARK}
-            textSize={TextSize.S}
-            onPress={() => navigation.navigate('Register')}
-        />
+          <Button
+              title={"Создать аккаунт"}
+              theme={ButtonTheme.CREATE}
+              textTheme={TextTheme.DARK}
+              textSize={TextSize.S}
+              onPress={() => navigation.navigate('Register')}
+          />
+        </View>
 
-
-        {/*<TouchableOpacity*/}
-        {/*  onPress={() => navigation.navigate('Register')}*/}
-        {/*  style={styles.registerButton}>*/}
-        {/*  <Text style={styles.registerText}>Register</Text>*/}
-        {/*</TouchableOpacity>*/}
       </View>
 
       {/* Отображение отправленных и полученных данных */}
@@ -123,7 +140,7 @@ const AuthScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 330,
+    paddingTop: 230,
     alignItems: 'center',
     backgroundColor: '#F7F7F7',
   },
@@ -133,7 +150,7 @@ const styles = StyleSheet.create({
   },
   insideBlock: {
     width: '100%',
-    marginBottom: 10,
+    marginBottom: 0,
   },
   registerButton: {
     marginTop: 20,
@@ -142,6 +159,29 @@ const styles = StyleSheet.create({
   registerText: {
     color: '#000',
   },
+  text:{
+    color: '#8C8C8C',
+    fontSize: 15,
+    marginTop: 80
+  },
+  downContainer:{
+    alignItems: 'center'
+  },
+  logoContainer:{
+    display: 'flex',
+    flexDirection: 'row',
+    gap: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 40
+  },
+  logo:{
+    color: '#545659'
+  },
+  logoText:{
+    fontSize: 20,
+    fontWeight: '600'
+  }
 });
 
 export default AuthScreen;

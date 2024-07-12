@@ -25,7 +25,7 @@ const ModalWindow: React.FC<ModalWin> = ({ title, children, icon, onClose, ...pr
                 />
                 <View style={styles.modalContainer}>
                     {icon && (
-                        <Ionicons style={styles.iconStyle} name={icon} size={24} />
+                        <Ionicons style={styles.iconStyle} name={icon} size={40} />
                     )}
                     {title && <Text style={styles.title}>{title}</Text>}
                     {children}

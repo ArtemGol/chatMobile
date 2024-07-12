@@ -49,7 +49,7 @@ export default ContactProfile;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFF',
+    backgroundColor: '#F7F7F7',
     paddingTop: 100,
     paddingLeft: 15,
     paddingRight: 15,

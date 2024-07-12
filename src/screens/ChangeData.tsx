@@ -2,7 +2,7 @@
 import React, {useState} from 'react';
 import {View, StyleSheet} from 'react-native';
 import ButtonLogin from '../components/ButtonLogin';
-
+import Modal from "../wighets/Modal.tsx";
 import {useSelector} from 'react-redux';
 import {userSelector} from '../store/auth/authSelector.ts';
 import {Input} from '../components/Input.tsx';
@@ -27,6 +27,8 @@ const ChangeData = () => {
   const [emailError, setEmailError] = useState<string>('');
   const [nicknameError, setNicknameError] = useState<string>('');
   const [phoneError, setPhoneError] = useState<string>('');
+
+  const [showModal, setShowModal] = useState(false);
 
   const isDisable =
     phone === userData.phone &&
@@ -63,9 +65,12 @@ const ChangeData = () => {
         authApi.endpoints.updateUser.initiate({phone, email, username}),
       ).then(res => {
         if (!res.error) {
-          navigate('Profile');
+          // navigate('Profile');
+          console.log('sucessfull')
+          setShowModal(true)
         }
       });
+
     }
   };
 
@@ -111,13 +116,21 @@ const ChangeData = () => {
             onPress={handleChange}
         />
       </View>
+      {showModal && (
+          <Modal title={'Данные изменены'} icon={'checkmark-circle-outline'}>
+            <Button title={'Ок'} onPress={() => {
+              setShowModal(false)
+              navigate('Profile');
+            }}/>
+          </Modal>
+      )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'white',
+    backgroundColor: '#F7F7F7',
     flex: 1,
     alignItems: 'center',
   },

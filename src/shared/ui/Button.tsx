@@ -23,7 +23,7 @@ export enum TextSize {
 interface ButtonProps {
     onPress?: () => void;
     title: string;
-    className?: string;
+    className?: Record<string, any>;
     theme?: ButtonTheme;
     disabled?: boolean;
     textTheme?: TextTheme
@@ -72,7 +72,7 @@ const buttonStyle = StyleSheet.create({
         paddingVertical: 10,
         paddingHorizontal: 20,
         borderRadius: 5,
-        marginTop: 15,
+        marginTop: 10,
         width: '100%',
         height: 45,
         justifyContent: 'center',

@@ -46,11 +46,18 @@ const HomeStack = createNativeStackNavigator();
 
 function MessageStack() {
   return (
-    <HomeStack.Navigator initialRouteName={'Create channel'}>
+    <HomeStack.Navigator initialRouteName={'Create channel'} >
       <HomeStack.Screen
         name="Create channel"
         component={ChatPreview}
-        options={{headerTitle: 'Чаты', headerShadowVisible: false,}}
+        options={{
+            headerTitle: 'Чаты',
+            headerShadowVisible: false,
+            headerStyle: {backgroundColor: '#F7F7F7'},
+            headerTitleAlign: 'center',
+
+            headerTitleStyle: {fontSize: 17, fontWeight: '500'},
+        }}
       />
       <HomeStack.Screen
         name="Chat"
@@ -58,6 +65,9 @@ function MessageStack() {
         options={({navigation}) => ({
           presentation: 'containedModal',
             headerShadowVisible: false,
+            headerStyle: {backgroundColor: '#F7F7F7'},
+            headerTitleAlign: 'center',
+            headerTitleStyle: {fontSize: 17, fontWeight: '500'},
           // eslint-disable-next-line react/no-unstable-nested-components
           headerLeft: () => (
               <TouchableOpacity
@@ -78,12 +88,17 @@ function MessageStack() {
       <HomeStack.Screen
         name="GiftedChatScreen"
         component={GiftedChatScreen}
+
         options={({navigation, route}) => ({
           //@ts-ignore
           title: route.params?.userName,
           headerRight: () => <GiftedChatRightHeader isConnected />,
           presentation: 'containedModal',
-            headerShadowVisible: false,
+            headerShadowVisible: true,
+            headerStyle: {backgroundColor: '#F7F7F7'},
+            headerTitleAlign: 'center',
+            headerTitleStyle: {fontSize: 17, fontWeight: '500'},
+
           // eslint-disable-next-line react/no-unstable-nested-components
           headerLeft: () => (
               <TouchableOpacity
@@ -111,7 +126,12 @@ function ProfileStack() {
       <HomeStack.Screen
         name="Profile"
         component={Profile}
-        options={{headerTitle: '', headerShadowVisible: false,}}
+        options={{
+            headerTitle: '',
+            headerShadowVisible: false,
+            headerStyle: {backgroundColor: '#F7F7F7'},
+        }}
+
       />
       <HomeStack.Screen
           name="ChangePassword"
@@ -119,6 +139,9 @@ function ProfileStack() {
           options={({navigation}) => ({
               headerTitle: 'Смена пароля',
               headerShadowVisible: false,
+              headerStyle: {backgroundColor: '#F7F7F7'},
+              headerTitleAlign: 'center',
+              headerTitleStyle: {fontSize: 17, fontWeight: '500'},
               // eslint-disable-next-line react/no-unstable-nested-components
               headerLeft: () => (
                   <TouchableOpacity
@@ -143,6 +166,9 @@ function ProfileStack() {
           options={({navigation}) => ({
               headerTitle: 'Изменить данные',
               headerShadowVisible: false,
+              headerStyle: {backgroundColor: '#F7F7F7'},
+              headerTitleAlign: 'center',
+              headerTitleStyle: {fontSize: 17, fontWeight: '500'},
               // eslint-disable-next-line react/no-unstable-nested-components
               headerLeft: () => (
                   <TouchableOpacity
@@ -174,6 +200,9 @@ function ContactStack() {
           title: 'Contacts',
           headerTitle: 'Контакты',
             headerShadowVisible: false,
+            headerStyle: {backgroundColor: '#F7F7F7'},
+            headerTitleAlign: 'center',
+            headerTitleStyle: {fontSize: 17, fontWeight: '500'},
           // eslint-disable-next-line react/no-unstable-nested-components
           headerRight: () => (
             <TouchableOpacity onPress={() => navigation.navigate('AddContact')}>
@@ -193,6 +222,10 @@ function ContactStack() {
         options={({navigation}) => ({
             headerShadowVisible: false,
           presentation: 'containedModal',
+            headerTitle: 'Контакт',
+            headerStyle: {backgroundColor: '#F7F7F7'},
+            headerTitleAlign: 'center',
+            headerTitleStyle: {fontSize: 17, fontWeight: '500'},
           // eslint-disable-next-line react/no-unstable-nested-components
           headerLeft: () => (
               <TouchableOpacity
@@ -216,6 +249,10 @@ function ContactStack() {
         options={({navigation}) => ({
           presentation: 'containedModal',
             headerShadowVisible: false,
+            headerTitle: 'Добавить контакт',
+            headerStyle: {backgroundColor: '#F7F7F7'},
+            headerTitleAlign: 'center',
+            headerTitleStyle: {fontSize: 17, fontWeight: '500'},
           // eslint-disable-next-line react/no-unstable-nested-components
           headerLeft: () => (
               <TouchableOpacity
@@ -490,6 +527,7 @@ function TabGroup() {
         },
         tabBarActiveTintColor: '#545659', // сюда закидывается цвет активного скрина на баре навигации
         tabBarInactiveTintColor: '#00000033', // тут цвет неактвной вкладки
+          tabBarHideOnKeyboard: true,
         tabBarStyle: {
           backgroundColor: 'white',
         },

@@ -100,7 +100,7 @@ export const {actions: authAction, reducer: authReducer} = createSlice({
         authApi.endpoints?.updateUser.matchFulfilled,
         (state, {payload}) => {
           state.userInfo = {...state.userInfo, ...payload};
-          Alert.alert('User info updated');
+          // Alert.alert('User info updated');
         },
       )
       .addMatcher(

@@ -3,7 +3,7 @@ import {
   Bubble,
   Composer,
   GiftedChat,
-  IMessage,
+  IMessage, Send,
   Time,
 } from 'react-native-gifted-chat';
 import type {Socket} from 'socket.io-client';
@@ -22,6 +22,8 @@ import {
 import {useAppDispatch} from '../store';
 import {channelAction} from '../store/channel/channelSlice.ts';
 import {GiftedChatRightHeader} from '../components/GiftedChatRightHeader.tsx';
+
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 export interface IncomingUser {
   id: string;
@@ -101,6 +103,42 @@ const GiftedChatScreen = () => {
     );
   };
 
+    useEffect(() => {
+        const parentNavigation = navigation.getParent();
+
+        const hideTabBar = parentNavigation?.addListener('focus', () => {
+            parentNavigation?.setOptions({ tabBarStyle: { display: 'flex' } });
+        });
+
+        const showTabBar = parentNavigation?.addListener('blur', () => {
+            parentNavigation?.setOptions({ tabBarStyle: { display: 'none' } });
+        });
+
+        navigation.addListener('focus', () => {
+            parentNavigation?.setOptions({ tabBarStyle: { display: 'none' } });
+        });
+
+        navigation.addListener('blur', () => {
+            parentNavigation?.setOptions({ tabBarStyle: { display: 'flex' } });
+        });
+
+        return () => {
+            if (hideTabBar) hideTabBar();
+            if (showTabBar) showTabBar();
+        };
+    }, [navigation]);
+
+
+
+
+  const renderSend = (props: any) => (
+    <Send {...props}>
+      <View style={styles.send}>
+        <Ionicons name="arrow-up-outline" size={28} color="white" />
+      </View>
+    </Send>
+  )
+
   return (
     <View
       style={[
@@ -109,6 +147,11 @@ const GiftedChatScreen = () => {
       ]}>
       <GiftedChat
         messages={currentMessages || []}
+        placeholder={'Сообщение'}
+        messagesContainerStyle={{ backgroundColor: '#F7F7F7' }}
+        renderSend={renderSend}
+        minInputToolbarHeight={55}
+
         onSend={messages => sendMessage(messages)}
         showUserAvatar={false}
         renderAvatarOnTop={false}
@@ -117,8 +160,30 @@ const GiftedChatScreen = () => {
         showAvatarForEveryMessage={false}
         renderUsername={dd => dd.name}
         renderComposer={props => (
-          <Composer {...props} textInputStyle={{color: '#000'}} />
+            <View style={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              padding: 8,
+              gap: 3
+            }}>
+              <Composer
+                  {...props}
+                  textInputStyle={{
+                    color: '#000',
+                    borderColor: '#D1D1D6',
+                    borderWidth: 1,
+                    borderRadius: 30,
+                    paddingLeft: 15,
+                    flex: 1,
+                    marginTop: 0,
+                    marginBottom: 2,
+                  }}
+              />
+              {renderSend(props)}
+            </View>
         )}
+        alwaysShowSend={true}
         renderBubble={props => (
           <Bubble
             {...props}
@@ -156,6 +221,7 @@ export default GiftedChatScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: 'red'
   },
   connected: {
     backgroundColor: '#EFEFF4',
@@ -170,7 +236,7 @@ const styles = StyleSheet.create({
     color: '#FFF',
   },
   bgRight: {
-    backgroundColor: '#E1FEC6',
+    backgroundColor: '#E7E7E7',
   },
   bgNotRead: {
     backgroundColor: '#808080',
@@ -178,4 +244,11 @@ const styles = StyleSheet.create({
   bgLeft: {
     backgroundColor: '#FFFFFF',
   },
+  send:{
+    borderRadius: 20,
+    padding: 5,
+    backgroundColor: '#545659',
+    marginBottom: 4
+  }
+
 });

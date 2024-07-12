@@ -23,12 +23,14 @@ const DialogsScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <Input
-        placeholder="Поиск диалога"
-        value={name}
-        onChangeText={setName}
-        type={'labelDown'}
-      />
+      <View style={{ paddingLeft: 16, paddingRight: 16 }}>
+        <Input
+            placeholder="Поиск диалога"
+            value={name}
+            onChangeText={setName}
+            type={'labelDown'}
+        />
+      </View>
       <FlatList
         data={channelsState}
         renderItem={({item}) => <RoomItem name={item} />}
@@ -44,6 +46,21 @@ const RoomItem = ({name}: {name: string}) => {
   const {data} = useGetChannelByNickNameQuery(name);
   const {navigate} = useNavigation<any>();
 
+
+  const channelsMessages = useSelector(channelsMessagesSelector);
+  const currentMessages = channelsMessages[name];
+  const lastMessage = currentMessages?.[0];
+
+
+  const formatTime = (dateString: string) => {
+    const date = new Date(dateString);
+    const daysOfWeek = ['Вc', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+    const day = daysOfWeek[date.getDay()];
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    return `${day} ${hours}:${minutes}`;
+  };
+
   return data?.ip ? (
     <TouchableOpacity
       onPress={() => {
@@ -54,16 +71,44 @@ const RoomItem = ({name}: {name: string}) => {
           withoutConnection: true,
         });
       }}
+
+
       style={styles.itemContainer}>
-      <Text style={styles.roomID}>{name}</Text>
-      <View style={styles.deleteButton}>
-        <Text style={styles.deleteButtonText}>{data.ip}</Text>
+      <View style={styles.round}>
+        <Text style={{ fontSize: 30}}>
+          {name.charAt(0).toUpperCase()}
+        </Text>
+      </View>
+
+      <View style={styles.preview}>
+        <Text style={styles.name}>{name}</Text>
+        <Text style={styles.lastMessage}>{lastMessage?.text || " "}</Text>
+      </View>
+
+      <View style={styles.info}>
+        <Text style={styles.date}>
+          {lastMessage ? formatTime(lastMessage?.createdAt?.toString()) : " "}
+        </Text>
         {newMessages > 0 && (
-          <View style={styles.messageCountBlock}>
-            <Text style={styles.messageCount}>{newMessages}</Text>
-          </View>
+            <View style={styles.newMessages}>
+              <Text style={styles.newMessagesAmount}>
+                {newMessages.toString()}
+              </Text>
+            </View>
         )}
       </View>
+
+
+      {/*<View style={styles.deleteButton}>*/}
+      {/*  <Text style={styles.deleteButtonText}>{data.ip}</Text>*/}
+
+      {/*  {newMessages > 0 && (*/}
+      {/*    <View style={styles.messageCountBlock}>*/}
+      {/*      <Text style={styles.messageCount}>{newMessages}</Text>*/}
+      {/*    </View>*/}
+      {/*  )}*/}
+      {/*</View>*/}
+
     </TouchableOpacity>
   ) : null;
 };
@@ -71,20 +116,18 @@ const RoomItem = ({name}: {name: string}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
-    backgroundColor: '#fff',
+    padding: 0,
+    backgroundColor: '#F7F7F7',
   },
   itemContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    // justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 16,
+    padding: 5,
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
-  },
-  roomID: {
-    color: '#000',
-    fontSize: 16,
+    // borderTopWidth: 1,
+    // borderTopColor: '#ccc',
   },
   deleteButton: {
     flexDirection: 'row',
@@ -107,6 +150,45 @@ const styles = StyleSheet.create({
     color: '#000',
     fontSize: 14,
   },
+  round: {
+    height: 60,
+    width: 60,
+    borderRadius: 30,
+    backgroundColor: '#F3F3F3',
+    fontSize: 14,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 10
+  },
+  lastMessage:{
+    height: 40
+  },
+  name:{
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#000000E5'
+  },
+  preview:{
+    width: '65%'
+  },
+  info:{
+    height: '100%'
+  },
+  newMessages:{
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 20,
+    borderRadius: 10,
+    backgroundColor: '#5075F6',
+    padding: 1,
+    marginLeft: 38,
+    marginTop: 12
+  },
+  newMessagesAmount:{
+    color: '#fff'
+  }
 });
 
 export default DialogsScreen;

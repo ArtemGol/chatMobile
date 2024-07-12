@@ -1,7 +1,8 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {Input} from '../components/Input';
 import ButtonLogin from '../components/ButtonLogin';
+import Button, {ButtonTheme, TextSize, TextTheme} from "../shared/ui/Button.tsx";
 import {useRegisterMutation} from '../api/authApi.ts';
 import {validationFunk} from '../assets/utils/validationFunk.ts';
 import {useAppDispatch} from '../store';
@@ -20,6 +21,8 @@ const Register = () => {
   const [emailError, setEmailError] = useState<string>('');
   const [nicknameError, setNicknameError] = useState<string>('');
   const [phoneError, setPhoneError] = useState<string>('');
+
+  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
   const handleRegister = async () => {
     const emailVal = validationFunk({
@@ -65,6 +68,21 @@ const Register = () => {
           }),
         );
       }
+    }
+  };
+
+  useEffect(() => {
+    checkInputs();
+  }, [username, password, email, phone]);
+
+  const checkInputs = () => {
+    if (username.length > 0 &&
+        password.length > 0 &&
+        phone.length > 0 &&
+        email.length > 0) {
+      setIsButtonDisabled(false);
+    } else {
+      setIsButtonDisabled(true);
     }
   };
 
@@ -124,8 +142,11 @@ const Register = () => {
           error={pasError}
           secureTextEntry
         />
-
-        <ButtonLogin onPress={handleRegister} title={'Register'} />
+        <Button
+            title={'Регистрация'}
+            onPress={handleRegister}
+            disabled={isButtonDisabled}
+        />
       </View>
     </View>
   );
@@ -135,7 +156,7 @@ export default Register;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#ffffff',
+    backgroundColor: '#F7F7F7',
     height: '100%',
     alignItems: 'center',
   },
