@@ -14,7 +14,7 @@ const ContactPlug = ({onPress, item}: IProps) => {
   return (
     <TouchableOpacity
       onPress={onPress}
-      style={[styles.contactPlug, {backgroundColor: '#ffffff'}]}>
+      style={styles.contactPlug}>
       <View style={styles.icon}>
         <Text style={styles.iconText}>{item.name.slice(0, 1)}</Text>
       </View>
@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: '#F3F3F3',
+    backgroundColor: '#eaeaea',
     justifyContent: 'center',
     alignItems: 'center',
     marginHorizontal: 10,
@@ -60,11 +60,14 @@ const styles = StyleSheet.create({
   textContainer: {
     flex: 1,
     marginLeft: 5,
+
   },
   contactPlug: {
     flexDirection: 'row',
     alignItems: 'center',
     height: 60,
+    backgroundColor: '#F7F7F7'
+
   },
 });
 

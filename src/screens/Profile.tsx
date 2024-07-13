@@ -15,7 +15,7 @@ import Button, {ButtonTheme, TextSize, TextTheme} from "../shared/ui/Button.tsx"
 
 import ModalWindow from "../wighets/Modal.tsx";
 
-
+import Search from "../shared/ui/Search.tsx";
 
 function Profile() {
   const {username, phone, email} = useSelector(userSelector);
@@ -34,6 +34,13 @@ function Profile() {
     AsyncStorage.clear();
   };
 
+  const formatPhoneNumber = (phoneNumber: string) => {
+    if (/^\+7\d{10}$/.test(phoneNumber)) {
+      return phoneNumber.replace(/(\+\d)(\d{3})(\d{3})(\d{2})(\d{2})/, '$1 $2 $3 $4 $5');
+    }
+    return phoneNumber;
+  };
+
 
   return (
     <View style={styles.container}>
@@ -43,9 +50,8 @@ function Profile() {
         </View>
         <View style={styles.dataBlock}>
           <Text style={styles.username}>{username}</Text>
-          <Text style={styles.phone}>{phone}</Text>
+          <Text style={styles.phone}>{formatPhoneNumber(phone)}</Text>
         </View>
-
         <TouchableOpacity
           style={styles.messageButton}
           onPress={() =>
@@ -73,6 +79,7 @@ function Profile() {
           <Text style={styles.messageButtonText}>Выйти</Text>
         </TouchableOpacity>
       </View>
+
       {showModal && (
           <ModalWindow title={'Выйти из аккаунта?'}>
             <Button
@@ -89,6 +96,8 @@ function Profile() {
             />
           </ModalWindow>
       )}
+
+
     </View>
   );
 }

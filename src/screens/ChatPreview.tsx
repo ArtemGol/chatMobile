@@ -7,9 +7,11 @@ import {
   newMessagesSelector,
 } from '../store/channel/channelSelector.ts';
 import {useGetChannelByNickNameQuery} from '../api/channelApi.ts';
-import {Input} from '../components/Input.tsx';
+
 import {useAppDispatch} from '../store';
 import {channelAction} from '../store/channel/channelSlice.ts';
+
+import Search from "../shared/ui/Search.tsx";
 
 const DialogsScreen: React.FC = () => {
   const [name, setName] = useState('');
@@ -23,12 +25,10 @@ const DialogsScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <View style={{ paddingLeft: 16, paddingRight: 16 }}>
-        <Input
-            placeholder="Поиск диалога"
+      <View style={{ paddingLeft: 10, paddingRight: 10}}>
+        <Search
             value={name}
             onChangeText={setName}
-            type={'labelDown'}
         />
       </View>
       <FlatList

@@ -149,11 +149,12 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     backgroundColor: '#edeff2',
     marginTop: 10,
+      fontSize: 17
   },
   inputUp: {
       paddingLeft: -5,
     color: '#000000',
-    fontSize: 16,
+    fontSize: 17,
     marginTop: -10,
     marginBottom: -10
   },

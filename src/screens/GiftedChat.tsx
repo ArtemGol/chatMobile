@@ -231,6 +231,7 @@ const styles = StyleSheet.create({
   },
   text: {
     color: '#000',
+      // backgroundColor: 'red'
   },
   textNotRead: {
     color: '#FFF',

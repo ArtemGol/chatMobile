@@ -20,11 +20,20 @@ const ContactProfile = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.mainheader}>{name}</Text>
-      <Text style={styles.status}>{channel ? 'подключен' : 'отсутствует'}</Text>
+      {/*<Text style={styles.mainheader}>{name}</Text>*/}
+      <View style={styles.roundContainer}>
+        <View style={styles.round}>
+          <Text style={styles.firstLetter}>{name.charAt(0).toUpperCase()}</Text>
+        </View>
+      </View>
+      {/*<Text style={styles.status}>{channel ? 'подключен' : 'нет в сети'}</Text>*/}
       <View>
         <View style={styles.section}>
-          <Text style={styles.label}>никнейм</Text>
+          {channel ? (
+              <Text style={styles.label}>никнейм</Text>
+          ):(
+              <Text style={styles.label}>имя</Text>
+          )}
           <Text style={styles.content}>{nickname}</Text>
         </View>
         <View style={styles.section}>
@@ -50,7 +59,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F7F7F7',
-    paddingTop: 100,
+    paddingTop: 50,
     paddingLeft: 15,
     paddingRight: 15,
   },
@@ -99,4 +108,20 @@ const styles = StyleSheet.create({
     fontSize: 16,
     paddingLeft: 10,
   },
+  round:{
+    backgroundColor: '#E4E4E4',
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  firstLetter:{
+    fontSize: 48,
+    color: '#00000033'
+  },
+  roundContainer:{
+    alignItems: 'center',
+    marginBottom: 30
+  }
 });
