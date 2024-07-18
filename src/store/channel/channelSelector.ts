@@ -1,5 +1,7 @@
 import {StateType} from '../index';
 import {createSelector} from '@reduxjs/toolkit';
+import {IMessage} from "react-native-gifted-chat";
+
 
 const state = ({channel}: StateType) => channel;
 
@@ -23,4 +25,16 @@ export const newMessagesSelector = createSelector(
 export const currentRoomUserSelector = createSelector(
   state,
   ({currentRoomUser}) => currentRoomUser,
+);
+
+
+export const allMessagesSelector = createSelector(
+    (state: StateType) => state.channel.channelsWithMessages,
+    (channelsWithMessages) => {
+        const allMessages: IMessage[] = [];
+        for (const port in channelsWithMessages) {
+            allMessages.push(...channelsWithMessages[port]);
+        }
+        return allMessages;
+    }
 );

@@ -76,7 +76,7 @@ export const authApi = createApi({
     }),
     updatePassword: builder.mutation<
       IUserInfo,
-      {old_password: string; new_password: string}
+      {old_password: string; new_password: string; code: string}
     >({
       query: body => ({
         url: 'api/v1/user/me/change_password',

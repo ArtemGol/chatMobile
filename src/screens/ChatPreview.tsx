@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet, FlatList} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
@@ -11,7 +11,12 @@ import {useGetChannelByNickNameQuery} from '../api/channelApi.ts';
 import {useAppDispatch} from '../store';
 import {channelAction} from '../store/channel/channelSlice.ts';
 
+
+import Modal from "../wighets/Modal.tsx";
 import Search from "../shared/ui/Search.tsx";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import Button from "../shared/ui/Button.tsx";
+import QRCode from 'react-native-qrcode-svg';
 
 const DialogsScreen: React.FC = () => {
   const [name, setName] = useState('');
@@ -23,6 +28,43 @@ const DialogsScreen: React.FC = () => {
     new Set(data?.port === name ? [...channels, data?.port] : channels),
   ).filter(el => el?.toLowerCase().includes(name.toLowerCase()));
 
+
+  const [regResponse, setRegResponse] = useState(null)
+  const [showCode, setShowCode] = useState(true)
+
+  const [link, setLink] = useState()
+  const [code, setCode] = useState()
+
+
+  useEffect(() => {
+    const getRecoverData = async () => {
+      try {
+        const storedData = await AsyncStorage.getItem('reg_response');
+        if (storedData !== null) {
+          console.log('Данные из AsyncStorage:', storedData);
+          // Можно распарсить JSON, если данные сохранены как JSON
+          const parsedData = JSON.parse(storedData);
+          const link = parsedData[1];
+          const codes = parsedData[2];
+
+          setLink(link);
+          setCode(codes);
+          console.log('Ссылка:', link);
+          console.log('Коды:', codes);
+          setRegResponse(link); // Устанавливаем данные в состояние
+        } else {
+          console.log('Данные в AsyncStorage отсутствуют');
+          setRegResponse(null); // Очищаем состояние, если данных нет
+        }
+      } catch (error) {
+        console.error('Ошибка при получении данных из AsyncStorage:', error);
+      }
+    };
+
+    getRecoverData();
+  }, []);
+
+
   return (
     <View style={styles.container}>
       <View style={{ paddingLeft: 10, paddingRight: 10}}>
@@ -31,11 +73,20 @@ const DialogsScreen: React.FC = () => {
             onChangeText={setName}
         />
       </View>
+      {regResponse && showCode && ( // Проверяем наличие данных в regResponse
+          <Modal title={'Сохраните резервные коды:'} >
+            {code && code.map((codeItem, index) => (
+                <Text style={{ fontSize: 17, padding: 2 }} key={index}>{codeItem}</Text>
+            ))}
+            <Button title={'Ок'} onPress={() => setShowCode(false)} />
+          </Modal>
+      )}
       <FlatList
         data={channelsState}
         renderItem={({item}) => <RoomItem name={item} />}
         keyExtractor={item => item.toString()}
       />
+
     </View>
   );
 };

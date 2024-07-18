@@ -8,6 +8,10 @@ import {validationFunk} from '../assets/utils/validationFunk.ts';
 import {useAppDispatch} from '../store';
 import {channelApi} from '../api/channelApi.ts';
 import {generateID} from '../assets/constants/generatedId.ts';
+import Modal from "../wighets/Modal.tsx";
+
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 
 const Register = () => {
   const dispatch = useAppDispatch();
@@ -58,15 +62,24 @@ const Register = () => {
       setPhoneError(phoneVal);
       setNicknameError(nicknameVal);
     } else {
-      const user = await register({username, phone, email, password}).unwrap();
-      const userName = user.requestParams.username;
-      if (userName) {
-        dispatch(
-          channelApi.endpoints.addChannel.initiate({
-            ip: generateID(),
-            port: userName,
-          }),
-        );
+      try {
+        const user = await register({ username, phone, email, password }).unwrap();
+
+        console.log('Ответ сервера:', user);
+        await AsyncStorage.setItem('reg_response', JSON.stringify(user.result));
+        console.log('Данные сохранены в AsyncStorage');
+
+        const userName = user.requestParams.username;
+        if (userName) {
+          dispatch(
+              channelApi.endpoints.addChannel.initiate({
+                ip: generateID(),
+                port: userName,
+              })
+          );
+        }
+      } catch (err) {
+        console.error('Ошибка при регистрации:', err);
       }
     }
   };

@@ -44,6 +44,7 @@ const getRoomsAndChannelsWithMessages = async () => {
   };
 };
 
+
 const getChannel = async (
   username: string,
   dispatch: typeof store.dispatch,

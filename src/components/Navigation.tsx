@@ -40,6 +40,11 @@ import {channelApi} from '../api/channelApi.ts';
 import {contactsApi} from '../api/contactsApi.ts';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type {IContact} from '../api/dto/IContacts.ts';
+import Modal from "../wighets/Modal.tsx";
+import Button from "../shared/ui/Button.tsx";
+
+
+
 
 const Tab = createBottomTabNavigator();
 const HomeStack = createNativeStackNavigator();
@@ -158,7 +163,6 @@ function ProfileStack() {
                   </TouchableOpacity>
               ),
           })}
-
       />
       <HomeStack.Screen
           name="ChangeData"
@@ -467,6 +471,7 @@ function TabGroup() {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [appState]);
+
 
   const handleReceiveMessage = ({
     message,

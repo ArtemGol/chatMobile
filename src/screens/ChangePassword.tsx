@@ -7,6 +7,7 @@ import {useAppDispatch} from '../store';
 import {authApi} from '../api/authApi.ts';
 
 import Button, {ButtonTheme, TextSize, TextTheme} from "../shared/ui/Button.tsx";
+import {useNavigation} from "@react-navigation/native";
 
 function ChangePassword() {
   const dispatch = useAppDispatch();
@@ -17,6 +18,8 @@ function ChangePassword() {
   const [oldError, setOldError] = useState<string>('');
   const [newError, setNewError] = useState<string>('');
   const [repeatError, setRepeatError] = useState<string>('');
+
+    const {navigate} = useNavigation<any>();
 
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
@@ -48,12 +51,8 @@ function ChangePassword() {
       setNewError(newPasVal);
       setRepeatError(repeatPasVal);
     } else {
-      dispatch(
-        authApi.endpoints.updatePassword.initiate({
-          old_password: oldPassword,
-          new_password: newPassword,
-        }),
-      );
+        navigate('Profile')
+
       // TODO: Change password
     }
   };
