@@ -6,8 +6,8 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 interface IProps {
     keyboardType?: 'default' | 'numeric' | 'email-address' | 'phone-pad';
     placeholder?: string;
-    value: string;
-    onChangeText: (text: string) => void;
+    value?: string;
+    onChangeText?: (text: string) => void;
     error?: string;
     secureTextEntry?: boolean;
     type: 'labelUp' | 'labelDown';
@@ -51,11 +51,6 @@ export const Input = ({
                 />
             </View>
 
-            {/*{!!error && (*/}
-            {/*    <Text style={[styles.labelDown, styles.marginBottom8, { color: textColor }]}>*/}
-            {/*        {error ? error : placeholder}*/}
-            {/*    </Text>*/}
-            {/*)}*/}
             {!!error ? (
                 <Text style={[styles.labelDown, styles.marginBottom8, { color: textColor }]}>
                     {error}

@@ -64,11 +64,7 @@ const Register = () => {
     } else {
       try {
         const user = await register({ username, phone, email, password }).unwrap();
-
-        console.log('Ответ сервера:', user);
         await AsyncStorage.setItem('reg_response', JSON.stringify(user.result));
-        console.log('Данные сохранены в AsyncStorage');
-
         const userName = user.requestParams.username;
         if (userName) {
           dispatch(

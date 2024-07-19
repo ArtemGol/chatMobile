@@ -28,7 +28,10 @@ const ModalWindow: React.FC<ModalWin> = ({ title, children, icon, onClose, ...pr
                         <Ionicons style={styles.iconStyle} name={icon} size={40} />
                     )}
                     {title && <Text style={styles.title}>{title}</Text>}
-                    {children}
+                    <View style={styles.children}>
+                        {children}
+                    </View>
+
                 </View>
             </View>
         </Modal>
@@ -64,7 +67,15 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 18,
         marginBottom: 10,
+        textAlign: 'center',
+        width: '100%',
+        paddingBottom: 12
     },
+    children: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '100%',
+    }
 });
 
 export default ModalWindow;

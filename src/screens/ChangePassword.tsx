@@ -51,15 +51,14 @@ function ChangePassword() {
       setNewError(newPasVal);
       setRepeatError(repeatPasVal);
     } else {
-        navigate('Profile')
+        navigate('ConfirmCode', {
+            oldPassword: oldPassword,
+            newPassword: newPassword
+        });
 
       // TODO: Change password
     }
   };
-
-    useEffect(() => {
-        checkInputs();
-    }, [oldPassword, newPassword, repeatPassword]);
 
     const checkInputs = () => {
         if (oldPassword.length > 0 &&
@@ -70,6 +69,11 @@ function ChangePassword() {
             setIsButtonDisabled(true);
         }
     };
+
+
+    useEffect(() => {
+        checkInputs();
+    }, [oldPassword, newPassword, repeatPassword]);
 
   return (
     <View style={styles.container}>
@@ -110,8 +114,6 @@ function ChangePassword() {
             />
         </View>
         <Button title={'Изменить пароль'} onPress={handleChange} disabled={isButtonDisabled}/>
-
-
     </View>
   );
 }

@@ -42,7 +42,6 @@ const DialogsScreen: React.FC = () => {
         const storedData = await AsyncStorage.getItem('reg_response');
         if (storedData !== null) {
           console.log('Данные из AsyncStorage:', storedData);
-          // Можно распарсить JSON, если данные сохранены как JSON
           const parsedData = JSON.parse(storedData);
           const link = parsedData[1];
           const codes = parsedData[2];
@@ -74,10 +73,13 @@ const DialogsScreen: React.FC = () => {
         />
       </View>
       {regResponse && showCode && ( // Проверяем наличие данных в regResponse
-          <Modal title={'Сохраните резервные коды:'} >
-            {code && code.map((codeItem, index) => (
-                <Text style={{ fontSize: 17, padding: 2 }} key={index}>{codeItem}</Text>
-            ))}
+          <Modal title={'Сохраните резервные коды или привяжите аккаут к Google для востановления доступа:'} >
+            <QRCode value={link}/>
+            <View style={styles.codes}>
+              {code && code.map((codeItem, index) => (
+                  <Text style={{ fontSize: 17, padding: 2 }} key={index}>{codeItem}</Text>
+              ))}
+            </View>
             <Button title={'Ок'} onPress={() => setShowCode(false)} />
           </Modal>
       )}
@@ -239,6 +241,10 @@ const styles = StyleSheet.create({
   },
   newMessagesAmount:{
     color: '#fff'
+  },
+  codes: {
+    marginTop: 12,
+    alignItems: 'center'
   }
 });
 
