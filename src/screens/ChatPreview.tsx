@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, TouchableOpacity, StyleSheet, FlatList} from 'react-native';
+import {View, Text, TouchableOpacity, StyleSheet, FlatList, Linking, Alert} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
 import {
@@ -11,12 +11,14 @@ import {useGetChannelByNickNameQuery} from '../api/channelApi.ts';
 import {useAppDispatch} from '../store';
 import {channelAction} from '../store/channel/channelSlice.ts';
 
-
-import Modal from "../wighets/Modal.tsx";
+import ModalWindow, {BackgroundColor} from "../wighets/Modal.tsx";
 import Search from "../shared/ui/Search.tsx";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Button from "../shared/ui/Button.tsx";
 import QRCode from 'react-native-qrcode-svg';
+import InfoBlock from "../shared/ui/InfoBlock.tsx";
+import Ionicons from "react-native-vector-icons/Ionicons";
+
 
 const DialogsScreen: React.FC = () => {
   const [name, setName] = useState('');
@@ -25,16 +27,15 @@ const DialogsScreen: React.FC = () => {
   const channels: string[] = Object.keys(channelsMessages);
 
   const channelsState = Array.from(
-    new Set(data?.port === name ? [...channels, data?.port] : channels),
+      new Set(data?.port === name ? [...channels, data?.port] : channels),
   ).filter(el => el?.toLowerCase().includes(name.toLowerCase()));
 
+  const [regResponse, setRegResponse] = useState(null);
+  const [showQRCode, setShowQRCode] = useState(true);
+  const [showCodes, setShowCodes] = useState(false);
 
-  const [regResponse, setRegResponse] = useState(null)
-  const [showCode, setShowCode] = useState(true)
-
-  const [link, setLink] = useState()
-  const [code, setCode] = useState()
-
+  const [link, setLink] = useState();
+  const [code, setCode] = useState();
 
   useEffect(() => {
     const getRecoverData = async () => {
@@ -63,33 +64,102 @@ const DialogsScreen: React.FC = () => {
     getRecoverData();
   }, []);
 
+  const handleOpenLink = async () => {
+    if (link) {
+      const supported = await Linking.canOpenURL(link);
+
+      if (supported) {
+        Linking.openURL(link).catch(err => console.error('Ошибка при открытии ссылки:', err));
+      } else {
+        Alert.alert(
+            "Не удалось открыть ссылку",
+            "Пожалуйста, установите приложение Google Authenticator и попробуйте снова.",
+            [{ text: "OK" }]
+        );
+      }
+    }
+  };
 
   return (
-    <View style={styles.container}>
-      <View style={{ paddingLeft: 10, paddingRight: 10}}>
-        <Search
-            value={name}
-            onChangeText={setName}
+      <View style={styles.container}>
+        <View style={{ paddingLeft: 10, paddingRight: 10}}>
+          <Search
+              value={name}
+              onChangeText={setName}
+          />
+        </View>
+        {regResponse && showQRCode && ( // Проверяем наличие данных в regResponse и показываем QR-код
+            <ModalWindow
+                title={'Привяжите аккаунт к Google authenticator для восстановления доступа'}
+                fullScreen={true}
+                visible={showQRCode}
+                onRequestClose={() => setShowQRCode(false)}
+                backgroundColor={BackgroundColor.GRAY}
+            >
+              <View style={{ width: '100%' }}>
+                <InfoBlock title={'Google authenticator'}>
+                  <QRCode value={link} />
+                </InfoBlock>
+              </View>
+
+              <TouchableOpacity
+                  style={styles.messageButton}
+                  onPress={handleOpenLink}
+              >
+                <Ionicons
+                    style={styles.iconStyle}
+                    name="link-outline"
+                    size={24}
+                />
+                <Text style={styles.messageButtonText}>Перейти в Google authenticator</Text>
+              </TouchableOpacity>
+
+              <Button title={'Ок'} onPress={() => {setShowQRCode(false); setShowCodes(true);}} />
+              <Text style={{ width: '100%', marginTop: 7 }}>
+                Это всегда можно сделать в настройках безопасности
+                в данных вашего профиля
+              </Text>
+            </ModalWindow>
+        )}
+        {regResponse && showCodes && ( // Проверяем наличие данных в regResponse и показываем резервные коды
+            <ModalWindow
+                title={'Сохраните резервные коды для восстановления доступа:'}
+                fullScreen={true}
+                visible={showCodes}
+                onRequestClose={() => setShowCodes(false)}
+                backgroundColor={BackgroundColor.GRAY}
+            >
+              <View style={{ width: '100%' }}>
+                <InfoBlock title={'Резервные коды:'}>
+                  {code && code.map((codeItem, index) => (
+                      <Text style={{ fontSize: 17, padding: 2 }} key={index}>{codeItem}</Text>
+                  ))}
+                </InfoBlock>
+              </View>
+              <TouchableOpacity
+                  style={styles.messageButton}
+
+              >
+                <Ionicons
+                    style={styles.iconStyle}
+                    name="copy-outline"
+                    size={24}
+                />
+                <Text style={styles.messageButtonText}>Скопировать коды</Text>
+              </TouchableOpacity>
+              <Button title={'Ок'} onPress={() => setShowCodes(false)} />
+              <Text style={{ width: '100%', marginTop: 7 }}>
+                Это всегда можно сделать в настройках безопасности
+                в данных вашего профиля
+              </Text>
+            </ModalWindow>
+        )}
+        <FlatList
+            data={channelsState}
+            renderItem={({item}) => <RoomItem name={item} />}
+            keyExtractor={item => item.toString()}
         />
       </View>
-      {regResponse && showCode && ( // Проверяем наличие данных в regResponse
-          <Modal title={'Сохраните резервные коды или привяжите аккаут к Google для востановления доступа:'} >
-            <QRCode value={link}/>
-            <View style={styles.codes}>
-              {code && code.map((codeItem, index) => (
-                  <Text style={{ fontSize: 17, padding: 2 }} key={index}>{codeItem}</Text>
-              ))}
-            </View>
-            <Button title={'Ок'} onPress={() => setShowCode(false)} />
-          </Modal>
-      )}
-      <FlatList
-        data={channelsState}
-        renderItem={({item}) => <RoomItem name={item} />}
-        keyExtractor={item => item.toString()}
-      />
-
-    </View>
   );
 };
 
@@ -99,11 +169,9 @@ const RoomItem = ({name}: {name: string}) => {
   const {data} = useGetChannelByNickNameQuery(name);
   const {navigate} = useNavigation<any>();
 
-
   const channelsMessages = useSelector(channelsMessagesSelector);
   const currentMessages = channelsMessages[name];
   const lastMessage = currentMessages?.[0];
-
 
   const formatTime = (dateString: string) => {
     const date = new Date(dateString);
@@ -115,54 +183,41 @@ const RoomItem = ({name}: {name: string}) => {
   };
 
   return data?.ip ? (
-    <TouchableOpacity
-      onPress={() => {
-        dispatch(channelAction.clearNewMessagesByName(name));
-        navigate('GiftedChatScreen', {
-          roomID: data.ip,
-          userName: name,
-          withoutConnection: true,
-        });
-      }}
+      <TouchableOpacity
+          onPress={() => {
+            dispatch(channelAction.clearNewMessagesByName(name));
+            navigate('GiftedChatScreen', {
+              roomID: data.ip,
+              userName: name,
+              withoutConnection: true,
+            });
+          }}
+          style={styles.itemContainer}>
+        <View style={styles.round}>
+          <Text style={{ fontSize: 30}}>
+            {name.charAt(0).toUpperCase()}
+          </Text>
+        </View>
 
+        <View style={styles.preview}>
+          <Text style={styles.name}>{name}</Text>
+          <Text style={styles.lastMessage}>{lastMessage?.text || " "}</Text>
+        </View>
 
-      style={styles.itemContainer}>
-      <View style={styles.round}>
-        <Text style={{ fontSize: 30}}>
-          {name.charAt(0).toUpperCase()}
-        </Text>
-      </View>
+        <View style={styles.info}>
+          <Text style={styles.date}>
+            {lastMessage ? formatTime(lastMessage?.createdAt?.toString()) : " "}
+          </Text>
+          {newMessages > 0 && (
+              <View style={styles.newMessages}>
+                <Text style={styles.newMessagesAmount}>
+                  {newMessages.toString()}
+                </Text>
+              </View>
+          )}
+        </View>
 
-      <View style={styles.preview}>
-        <Text style={styles.name}>{name}</Text>
-        <Text style={styles.lastMessage}>{lastMessage?.text || " "}</Text>
-      </View>
-
-      <View style={styles.info}>
-        <Text style={styles.date}>
-          {lastMessage ? formatTime(lastMessage?.createdAt?.toString()) : " "}
-        </Text>
-        {newMessages > 0 && (
-            <View style={styles.newMessages}>
-              <Text style={styles.newMessagesAmount}>
-                {newMessages.toString()}
-              </Text>
-            </View>
-        )}
-      </View>
-
-
-      {/*<View style={styles.deleteButton}>*/}
-      {/*  <Text style={styles.deleteButtonText}>{data.ip}</Text>*/}
-
-      {/*  {newMessages > 0 && (*/}
-      {/*    <View style={styles.messageCountBlock}>*/}
-      {/*      <Text style={styles.messageCount}>{newMessages}</Text>*/}
-      {/*    </View>*/}
-      {/*  )}*/}
-      {/*</View>*/}
-
-    </TouchableOpacity>
+      </TouchableOpacity>
   ) : null;
 };
 
@@ -174,13 +229,10 @@ const styles = StyleSheet.create({
   },
   itemContainer: {
     flexDirection: 'row',
-    // justifyContent: 'space-between',
     alignItems: 'center',
     padding: 5,
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
-    // borderTopWidth: 1,
-    // borderTopColor: '#ccc',
   },
   deleteButton: {
     flexDirection: 'row',
@@ -245,7 +297,28 @@ const styles = StyleSheet.create({
   codes: {
     marginTop: 12,
     alignItems: 'center'
-  }
+  },
+  messageButton: {
+    marginTop: 10,
+    marginBottom: 10,
+    paddingLeft: 10,
+    color: '#000000A1',
+    width: '100%',
+    flexDirection: 'row',
+    backgroundColor: '#FFFFFF',
+    paddingVertical: 12,
+    borderRadius: 4,
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+  },
+  iconStyle: {
+    color: '#000',
+  },
+  messageButtonText: {
+    color: '#000000E5',
+    fontSize: 16,
+    paddingLeft: 10,
+  },
 });
 
 export default DialogsScreen;

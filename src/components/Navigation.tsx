@@ -21,6 +21,7 @@ import ContactProfile from '../screens/ContactProfile';
 import AddContact from '../screens/AddContact';
 import GiftedChatScreen from '../screens/GiftedChat.tsx';
 import ConfirmCode from "../screens/ConfirmCode.tsx";
+import Security from "../screens/Security.tsx";
 import * as io from 'socket.io-client';
 import {BASE_CHANNEL_URL} from '../assets/constants';
 import type {Socket} from 'socket.io-client';
@@ -171,6 +172,32 @@ function ProfileStack() {
             component={ConfirmCode}
             options={({navigation}) => ({
                 headerTitle: 'Смена пароля',
+                headerShadowVisible: false,
+                headerStyle: {backgroundColor: '#F7F7F7'},
+                headerTitleAlign: 'center',
+                headerTitleStyle: {fontSize: 17, fontWeight: '500'},
+                // eslint-disable-next-line react/no-unstable-nested-components
+                headerLeft: () => (
+                    <TouchableOpacity
+                        onPress={() => navigation.goBack()}
+                        style={styles.backContainer}
+                    >
+                        <Ionicons
+                            name="chevron-back-outline"
+                            size={28}
+                            color="#00000099"
+                            // style={styles.iconRight}
+                        />
+                        <Text style={styles.text}>Назад</Text>
+                    </TouchableOpacity>
+                ),
+            })}
+        />
+        <HomeStack.Screen
+            name="Security"
+            component={Security}
+            options={({navigation}) => ({
+                headerTitle: 'Безопасность',
                 headerShadowVisible: false,
                 headerStyle: {backgroundColor: '#F7F7F7'},
                 headerTitleAlign: 'center',

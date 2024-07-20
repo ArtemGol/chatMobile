@@ -30,6 +30,7 @@ function AddContact() {
         if (token !== null) {
           const userData = JSON.parse(token);
           setJwtToken(userData.jwtToken);
+          console.log("jwt: " + userData.jwtToken)
         }
       } catch (error) {
         console.error('Error retrieving JWT token:', error);
@@ -69,6 +70,7 @@ function AddContact() {
       }
     } catch (error) {
       console.error('Error:', error);
+
     }
   };
 
