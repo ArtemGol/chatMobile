@@ -74,6 +74,16 @@ function Profile() {
           <Text style={styles.messageButtonText}>изменить данные</Text>
         </TouchableOpacity>
         <TouchableOpacity
+            style={styles.messageButton}
+            onPress={() => navigation.navigate('Security')}>
+          <Ionicons
+              style={styles.iconStyle}
+              name="shield-outline"
+              size={24}
+          />
+          <Text style={styles.messageButtonText}>Безопасность</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
           style={styles.messageButton}
           onPress={() => navigation.navigate('ChangePassword')}>
           <Ionicons
