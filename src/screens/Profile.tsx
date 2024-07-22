@@ -1,5 +1,5 @@
 // Profile.js
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {useRef, useState} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -11,11 +11,15 @@ import {channelAction} from '../store/channel/channelSlice.ts';
 import {connectionSelector} from '../store/channel/channelSelector.ts';
 import type {Socket} from 'socket.io-client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Button, {ButtonTheme, TextSize, TextTheme} from "../shared/ui/Button.tsx";
+import Button, {
+  ButtonTheme,
+  TextSize,
+  TextTheme,
+} from '../shared/ui/Button.tsx';
 
-import ModalWindow from "../wighets/Modal.tsx";
+import ModalWindow from '../wighets/Modal.tsx';
 
-import Search from "../shared/ui/Search.tsx";
+import Search from '../shared/ui/Search.tsx';
 
 function Profile() {
   const {username, phone, email} = useSelector(userSelector);
@@ -25,10 +29,11 @@ function Profile() {
   const navigation = useNavigation<any>();
   const socketRef = useRef<Socket | null>(connection);
 
-  const [showModal, setShowModal] = useState(false)
+  const [showModal, setShowModal] = useState(false);
 
   const handleLogout = () => {
     dispatch(channelAction.clearChannelsWithMessages());
+    dispatch(channelAction.clearNewMessages());
     dispatch(authAction.logout());
     socketRef.current?.disconnect();
     AsyncStorage.clear();
@@ -36,17 +41,21 @@ function Profile() {
 
   const formatPhoneNumber = (phoneNumber: string) => {
     if (/^\+7\d{10}$/.test(phoneNumber)) {
-      return phoneNumber.replace(/(\+\d)(\d{3})(\d{3})(\d{2})(\d{2})/, '$1 $2 $3 $4 $5');
+      return phoneNumber.replace(
+        /(\+\d)(\d{3})(\d{3})(\d{2})(\d{2})/,
+        '$1 $2 $3 $4 $5',
+      );
     }
     return phoneNumber;
   };
-
 
   return (
     <View style={styles.container}>
       <View style={styles.innercontainer}>
         <View style={styles.round}>
-          <Text style={styles.firstLetter}>{username.charAt(0).toUpperCase()}</Text>
+          <Text style={styles.firstLetter}>
+            {username.charAt(0).toUpperCase()}
+          </Text>
         </View>
         <View style={styles.dataBlock}>
           <Text style={styles.username}>{username}</Text>
@@ -74,30 +83,30 @@ function Profile() {
           />
           <Text style={styles.messageButtonText}>изменить пароль</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.messageButton} onPress={() => setShowModal(true)}>
+        <TouchableOpacity
+          style={styles.messageButton}
+          onPress={() => setShowModal(true)}>
           <Ionicons style={styles.iconStyle} name="exit-outline" size={24} />
           <Text style={styles.messageButtonText}>Выйти</Text>
         </TouchableOpacity>
       </View>
 
       {showModal && (
-          <ModalWindow title={'Выйти из аккаунта?'}>
-            <Button
-                title={'Выход'}
-                theme={ButtonTheme.LOGOUT}
-                textTheme={TextTheme.ERROR}
-                textSize={TextSize.S}
-                onPress={handleLogout}
-            />
-            <Button
-                title={'Отмена'}
-                textSize={TextSize.S}
-                onPress={() => setShowModal(false)}
-            />
-          </ModalWindow>
+        <ModalWindow title={'Выйти из аккаунта?'}>
+          <Button
+            title={'Выход'}
+            theme={ButtonTheme.LOGOUT}
+            textTheme={TextTheme.ERROR}
+            textSize={TextSize.S}
+            onPress={handleLogout}
+          />
+          <Button
+            title={'Отмена'}
+            textSize={TextSize.S}
+            onPress={() => setShowModal(false)}
+          />
+        </ModalWindow>
       )}
-
-
     </View>
   );
 }
@@ -106,7 +115,7 @@ const styles = StyleSheet.create({
   iconStyle: {
     color: '#000',
   },
-  round:{
+  round: {
     backgroundColor: '#E4E4E4',
     width: 100,
     height: 100,
@@ -114,23 +123,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  firstLetter:{
+  firstLetter: {
     fontSize: 48,
-    color: '#00000033'
+    color: '#00000033',
   },
-  dataBlock:{
+  dataBlock: {
     alignItems: 'center',
     marginTop: 5,
-    marginBottom: 40
+    marginBottom: 40,
   },
   username: {
     fontSize: 26,
     color: '#000000E5',
-    fontWeight: '500'
+    fontWeight: '500',
   },
   phone: {
     color: '#8E8E93',
-    fontSize: 16
+    fontSize: 16,
   },
 
   container: {

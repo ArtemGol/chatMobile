@@ -4,11 +4,13 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {
-    AppState,
-    AppStateStatus,
-    PermissionsAndroid,
-    StyleSheet, Text,
-    TouchableOpacity,
+  AppState,
+  AppStateStatus,
+  Linking,
+  PermissionsAndroid,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
 } from 'react-native';
 
 import Profile from '../screens/Profile';
@@ -20,7 +22,7 @@ import ChatPreview from '../screens/ChatPreview';
 import ContactProfile from '../screens/ContactProfile';
 import AddContact from '../screens/AddContact';
 import GiftedChatScreen from '../screens/GiftedChat.tsx';
-import ConfirmCode from "../screens/ConfirmCode.tsx";
+import ConfirmCode from '../screens/ConfirmCode.tsx';
 import * as io from 'socket.io-client';
 import {BASE_CHANNEL_URL} from '../assets/constants';
 import type {Socket} from 'socket.io-client';
@@ -41,28 +43,24 @@ import {channelApi} from '../api/channelApi.ts';
 import {contactsApi} from '../api/contactsApi.ts';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type {IContact} from '../api/dto/IContacts.ts';
-import Modal from "../wighets/Modal.tsx";
-import Button from "../shared/ui/Button.tsx";
-
-
-
+import messaging from '@react-native-firebase/messaging';
 
 const Tab = createBottomTabNavigator();
 const HomeStack = createNativeStackNavigator();
 
 function MessageStack() {
   return (
-    <HomeStack.Navigator initialRouteName={'Create channel'} >
+    <HomeStack.Navigator initialRouteName={'Create channel'}>
       <HomeStack.Screen
         name="Create channel"
         component={ChatPreview}
         options={{
-            headerTitle: 'Чаты',
-            headerShadowVisible: false,
-            headerStyle: {backgroundColor: '#F7F7F7'},
-            headerTitleAlign: 'center',
+          headerTitle: 'Чаты',
+          headerShadowVisible: false,
+          headerStyle: {backgroundColor: '#F7F7F7'},
+          headerTitleAlign: 'center',
 
-            headerTitleStyle: {fontSize: 17, fontWeight: '500'},
+          headerTitleStyle: {fontSize: 17, fontWeight: '500'},
         }}
       />
       <HomeStack.Screen
@@ -70,55 +68,52 @@ function MessageStack() {
         component={ChatDetails}
         options={({navigation}) => ({
           presentation: 'containedModal',
-            headerShadowVisible: false,
-            headerStyle: {backgroundColor: '#F7F7F7'},
-            headerTitleAlign: 'center',
-            headerTitleStyle: {fontSize: 17, fontWeight: '500'},
+          headerShadowVisible: false,
+          headerStyle: {backgroundColor: '#F7F7F7'},
+          headerTitleAlign: 'center',
+          headerTitleStyle: {fontSize: 17, fontWeight: '500'},
           // eslint-disable-next-line react/no-unstable-nested-components
           headerLeft: () => (
-              <TouchableOpacity
-                  onPress={() => navigation.goBack()}
-                  style={styles.backContainer}
-              >
-                  <Ionicons
-                      name="chevron-back-outline"
-                      size={28}
-                      color="#00000099"
-                      // style={styles.iconRight}
-                  />
-                  <Text style={styles.text}>Назад</Text>
-              </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => navigation.goBack()}
+              style={styles.backContainer}>
+              <Ionicons
+                name="chevron-back-outline"
+                size={28}
+                color="#00000099"
+                // style={styles.iconRight}
+              />
+              <Text style={styles.text}>Назад</Text>
+            </TouchableOpacity>
           ),
         })}
       />
       <HomeStack.Screen
         name="GiftedChatScreen"
         component={GiftedChatScreen}
-
         options={({navigation, route}) => ({
           //@ts-ignore
           title: route.params?.userName,
           headerRight: () => <GiftedChatRightHeader isConnected />,
           presentation: 'containedModal',
-            headerShadowVisible: true,
-            headerStyle: {backgroundColor: '#F7F7F7'},
-            headerTitleAlign: 'center',
-            headerTitleStyle: {fontSize: 17, fontWeight: '500'},
+          headerShadowVisible: true,
+          headerStyle: {backgroundColor: '#F7F7F7'},
+          headerTitleAlign: 'center',
+          headerTitleStyle: {fontSize: 17, fontWeight: '500'},
 
           // eslint-disable-next-line react/no-unstable-nested-components
           headerLeft: () => (
-              <TouchableOpacity
-                  onPress={() => navigation.goBack()}
-                  style={styles.backContainer}
-              >
-                  <Ionicons
-                      name="chevron-back-outline"
-                      size={28}
-                      color="#00000099"
-                      // style={styles.iconRight}
-                  />
-                  <Text style={styles.text}>Чаты</Text>
-              </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => navigation.goBack()}
+              style={styles.backContainer}>
+              <Ionicons
+                name="chevron-back-outline"
+                size={28}
+                color="#00000099"
+                // style={styles.iconRight}
+              />
+              <Text style={styles.text}>Чаты</Text>
+            </TouchableOpacity>
           ),
         })}
       />
@@ -133,90 +128,86 @@ function ProfileStack() {
         name="Profile"
         component={Profile}
         options={{
-            headerTitle: '',
-            headerShadowVisible: false,
-            headerStyle: {backgroundColor: '#F7F7F7'},
+          headerTitle: '',
+          headerShadowVisible: false,
+          headerStyle: {backgroundColor: '#F7F7F7'},
         }}
-
       />
       <HomeStack.Screen
-          name="ChangePassword"
-          component={ChangePassword}
-          options={({navigation}) => ({
-              headerTitle: 'Смена пароля',
-              headerShadowVisible: false,
-              headerStyle: {backgroundColor: '#F7F7F7'},
-              headerTitleAlign: 'center',
-              headerTitleStyle: {fontSize: 17, fontWeight: '500'},
-              // eslint-disable-next-line react/no-unstable-nested-components
-              headerLeft: () => (
-                  <TouchableOpacity
-                      onPress={() => navigation.goBack()}
-                      style={styles.backContainer}
-                  >
-                      <Ionicons
-                          name="chevron-back-outline"
-                          size={28}
-                          color="#00000099"
-                          // style={styles.iconRight}
-                      />
-                      <Text style={styles.text}>Назад</Text>
-                  </TouchableOpacity>
-              ),
-          })}
+        name="ChangePassword"
+        component={ChangePassword}
+        options={({navigation}) => ({
+          headerTitle: 'Смена пароля',
+          headerShadowVisible: false,
+          headerStyle: {backgroundColor: '#F7F7F7'},
+          headerTitleAlign: 'center',
+          headerTitleStyle: {fontSize: 17, fontWeight: '500'},
+          // eslint-disable-next-line react/no-unstable-nested-components
+          headerLeft: () => (
+            <TouchableOpacity
+              onPress={() => navigation.goBack()}
+              style={styles.backContainer}>
+              <Ionicons
+                name="chevron-back-outline"
+                size={28}
+                color="#00000099"
+                // style={styles.iconRight}
+              />
+              <Text style={styles.text}>Назад</Text>
+            </TouchableOpacity>
+          ),
+        })}
       />
 
-        <HomeStack.Screen
-            name="ConfirmCode"
-            component={ConfirmCode}
-            options={({navigation}) => ({
-                headerTitle: 'Смена пароля',
-                headerShadowVisible: false,
-                headerStyle: {backgroundColor: '#F7F7F7'},
-                headerTitleAlign: 'center',
-                headerTitleStyle: {fontSize: 17, fontWeight: '500'},
-                // eslint-disable-next-line react/no-unstable-nested-components
-                headerLeft: () => (
-                    <TouchableOpacity
-                        onPress={() => navigation.goBack()}
-                        style={styles.backContainer}
-                    >
-                        <Ionicons
-                            name="chevron-back-outline"
-                            size={28}
-                            color="#00000099"
-                            // style={styles.iconRight}
-                        />
-                        <Text style={styles.text}>Назад</Text>
-                    </TouchableOpacity>
-                ),
-            })}
-        />
       <HomeStack.Screen
-          name="ChangeData"
-          component={ChangeData}
-          options={({navigation}) => ({
-              headerTitle: 'Изменить данные',
-              headerShadowVisible: false,
-              headerStyle: {backgroundColor: '#F7F7F7'},
-              headerTitleAlign: 'center',
-              headerTitleStyle: {fontSize: 17, fontWeight: '500'},
-              // eslint-disable-next-line react/no-unstable-nested-components
-              headerLeft: () => (
-                  <TouchableOpacity
-                      onPress={() => navigation.goBack()}
-                      style={styles.backContainer}
-                  >
-                      <Ionicons
-                          name="chevron-back-outline"
-                          size={28}
-                          color="#00000099"
-                          // style={styles.iconRight}
-                      />
-                      <Text style={styles.text}>Назад</Text>
-                  </TouchableOpacity>
-              ),
-          })}
+        name="ConfirmCode"
+        component={ConfirmCode}
+        options={({navigation}) => ({
+          headerTitle: 'Смена пароля',
+          headerShadowVisible: false,
+          headerStyle: {backgroundColor: '#F7F7F7'},
+          headerTitleAlign: 'center',
+          headerTitleStyle: {fontSize: 17, fontWeight: '500'},
+          // eslint-disable-next-line react/no-unstable-nested-components
+          headerLeft: () => (
+            <TouchableOpacity
+              onPress={() => navigation.goBack()}
+              style={styles.backContainer}>
+              <Ionicons
+                name="chevron-back-outline"
+                size={28}
+                color="#00000099"
+                // style={styles.iconRight}
+              />
+              <Text style={styles.text}>Назад</Text>
+            </TouchableOpacity>
+          ),
+        })}
+      />
+      <HomeStack.Screen
+        name="ChangeData"
+        component={ChangeData}
+        options={({navigation}) => ({
+          headerTitle: 'Изменить данные',
+          headerShadowVisible: false,
+          headerStyle: {backgroundColor: '#F7F7F7'},
+          headerTitleAlign: 'center',
+          headerTitleStyle: {fontSize: 17, fontWeight: '500'},
+          // eslint-disable-next-line react/no-unstable-nested-components
+          headerLeft: () => (
+            <TouchableOpacity
+              onPress={() => navigation.goBack()}
+              style={styles.backContainer}>
+              <Ionicons
+                name="chevron-back-outline"
+                size={28}
+                color="#00000099"
+                // style={styles.iconRight}
+              />
+              <Text style={styles.text}>Назад</Text>
+            </TouchableOpacity>
+          ),
+        })}
       />
     </HomeStack.Navigator>
   );
@@ -231,10 +222,10 @@ function ContactStack() {
         options={({navigation}) => ({
           title: 'Contacts',
           headerTitle: 'Контакты',
-            headerShadowVisible: false,
-            headerStyle: {backgroundColor: '#F7F7F7'},
-            headerTitleAlign: 'center',
-            headerTitleStyle: {fontSize: 17, fontWeight: '500'},
+          headerShadowVisible: false,
+          headerStyle: {backgroundColor: '#F7F7F7'},
+          headerTitleAlign: 'center',
+          headerTitleStyle: {fontSize: 17, fontWeight: '500'},
           // eslint-disable-next-line react/no-unstable-nested-components
           headerRight: () => (
             <TouchableOpacity onPress={() => navigation.navigate('AddContact')}>
@@ -252,26 +243,25 @@ function ContactStack() {
         name="ContactProfile"
         component={ContactProfile}
         options={({navigation}) => ({
-            headerShadowVisible: false,
+          headerShadowVisible: false,
           presentation: 'containedModal',
-            headerTitle: 'Контакт',
-            headerStyle: {backgroundColor: '#F7F7F7'},
-            headerTitleAlign: 'center',
-            headerTitleStyle: {fontSize: 17, fontWeight: '500'},
+          headerTitle: 'Контакт',
+          headerStyle: {backgroundColor: '#F7F7F7'},
+          headerTitleAlign: 'center',
+          headerTitleStyle: {fontSize: 17, fontWeight: '500'},
           // eslint-disable-next-line react/no-unstable-nested-components
           headerLeft: () => (
-              <TouchableOpacity
-                  onPress={() => navigation.goBack()}
-                  style={styles.backContainer}
-              >
-                  <Ionicons
-                      name="chevron-back-outline"
-                      size={28}
-                      color="#00000099"
-                      // style={styles.iconRight}
-                  />
-                  <Text style={styles.text}>Назад</Text>
-              </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => navigation.goBack()}
+              style={styles.backContainer}>
+              <Ionicons
+                name="chevron-back-outline"
+                size={28}
+                color="#00000099"
+                // style={styles.iconRight}
+              />
+              <Text style={styles.text}>Назад</Text>
+            </TouchableOpacity>
           ),
         })}
       />
@@ -280,25 +270,24 @@ function ContactStack() {
         component={AddContact}
         options={({navigation}) => ({
           presentation: 'containedModal',
-            headerShadowVisible: false,
-            headerTitle: 'Добавить контакт',
-            headerStyle: {backgroundColor: '#F7F7F7'},
-            headerTitleAlign: 'center',
-            headerTitleStyle: {fontSize: 17, fontWeight: '500'},
+          headerShadowVisible: false,
+          headerTitle: 'Добавить контакт',
+          headerStyle: {backgroundColor: '#F7F7F7'},
+          headerTitleAlign: 'center',
+          headerTitleStyle: {fontSize: 17, fontWeight: '500'},
           // eslint-disable-next-line react/no-unstable-nested-components
           headerLeft: () => (
-              <TouchableOpacity
-                  onPress={() => navigation.goBack()}
-                  style={styles.backContainer}
-              >
-                  <Ionicons
-                      name="chevron-back-outline"
-                      size={28}
-                      color="#00000099"
-                      // style={styles.iconRight}
-                  />
-                  <Text style={styles.text}>Назад</Text>
-              </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => navigation.goBack()}
+              style={styles.backContainer}>
+              <Ionicons
+                name="chevron-back-outline"
+                size={28}
+                color="#00000099"
+                // style={styles.iconRight}
+              />
+              <Text style={styles.text}>Назад</Text>
+            </TouchableOpacity>
           ),
         })}
       />
@@ -371,6 +360,9 @@ function TabGroup() {
         userName: string;
         id: string;
       }) => {
+        if (data.userName === username) {
+          return;
+        }
         handleReceiveMessage(data);
       },
     );
@@ -500,7 +492,6 @@ function TabGroup() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [appState]);
 
-
   const handleReceiveMessage = ({
     message,
     userName,
@@ -528,8 +519,8 @@ function TabGroup() {
         userName: channel?.port || userName || '',
         id,
       });
+      dispatch(channelAction.setNewMessages(userName));
     }
-    dispatch(channelAction.setNewMessages(userName));
     dispatch(
       channelAction.setChannelsWithMessages({
         roomID: channel?.ip || roomID || '',
@@ -560,7 +551,7 @@ function TabGroup() {
         },
         tabBarActiveTintColor: '#545659', // сюда закидывается цвет активного скрина на баре навигации
         tabBarInactiveTintColor: '#00000033', // тут цвет неактвной вкладки
-          tabBarHideOnKeyboard: true,
+        tabBarHideOnKeyboard: true,
         tabBarStyle: {
           backgroundColor: 'white',
         },
@@ -599,9 +590,72 @@ const getContactsFromStore = async () => {
   return currentContacts;
 };
 
+const NAVIGATION_IDS = ['contacts', 'create', 'profiles'];
+
+function buildDeepLinkFromNotificationData(data: any): string | null {
+  const navigationId = data?.notificationId;
+  if (!NAVIGATION_IDS.includes(navigationId)) {
+    console.warn('Unverified navigationId', navigationId);
+    return null;
+  }
+  if (navigationId === 'create') {
+    return 'myapp://create';
+  }
+  console.warn('Missing postId');
+  return null;
+}
+
+const linking = {
+  prefixes: ['myapp://'],
+  config: {
+    screens: {
+      Create: 'create',
+    },
+  },
+  async getInitialURL() {
+    const url = await Linking.getInitialURL();
+    if (typeof url === 'string') {
+      return url;
+    }
+    //getInitialNotification: When the application is opened from a quit state.
+    const message = await messaging().getInitialNotification();
+    const deeplinkURL = buildDeepLinkFromNotificationData(message?.data);
+    if (typeof deeplinkURL === 'string') {
+      return deeplinkURL;
+    }
+  },
+  subscribe(listener: (url: string) => void) {
+    const onReceiveURL = ({url}: {url: string}) => listener(url);
+
+    // Listen to incoming links from deep linking
+    const linkingSubscription = Linking.addEventListener('url', onReceiveURL);
+    messaging().setBackgroundMessageHandler(async remoteMessage => {
+      console.log('Message handled in the background!', remoteMessage);
+    });
+
+    const foreground = messaging().onMessage(async remoteMessage => {
+      console.log('Message received in foreground!', remoteMessage);
+    });
+
+    //onNotificationOpenedApp: When the application is running, but in the background.
+    const unsubscribe = messaging().onNotificationOpenedApp(remoteMessage => {
+      const url = buildDeepLinkFromNotificationData(remoteMessage.data);
+      if (typeof url === 'string') {
+        listener(url);
+      }
+    });
+
+    return () => {
+      linkingSubscription.remove();
+      unsubscribe();
+      foreground();
+    };
+  },
+};
+
 const Navigation = () => {
   return (
-    <NavigationContainer>
+    <NavigationContainer linking={linking}>
       <TabGroup />
     </NavigationContainer>
   );
@@ -613,14 +667,14 @@ const styles = StyleSheet.create({
   iconRight: {
     marginRight: 5,
   },
-    backContainer:{
-      flexDirection: 'row',
-      gap: 0,
-      alignItems: 'center',
-      display: 'flex',
-    },
-    text:{
-      fontWeight: '400',
-      fontSize: 15,
-    }
+  backContainer: {
+    flexDirection: 'row',
+    gap: 0,
+    alignItems: 'center',
+    display: 'flex',
+  },
+  text: {
+    fontWeight: '400',
+    fontSize: 15,
+  },
 });

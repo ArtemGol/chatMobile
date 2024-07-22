@@ -19,6 +19,9 @@ target 'AwesomeProject' do
 
   pod 'react-native-contacts', :path => '../node_modules/react-native-contacts'
 
+  use_frameworks! :linkage => :static
+  $RNFirebaseAsStaticFramework = true
+
   use_react_native!(
     :path => config[:reactNativePath],
     # An absolute path to your application root.

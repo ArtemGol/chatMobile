@@ -3,7 +3,13 @@ import Navigation from './Navigation.tsx';
 import {NavigationContainer} from '@react-navigation/native';
 import AuthScreen from '../screens/Auth.tsx';
 import RegisterScreen from '../screens/Register.tsx';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+  PermissionsAndroid,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {accessTokenSelector} from '../store/auth/authSelector.ts';
 import {useSelector} from 'react-redux';
@@ -15,7 +21,8 @@ import {IChannel} from '../api/dto/IChannel.ts';
 import {channelAction} from '../store/channel/channelSlice.ts';
 import {channelApi} from '../api/channelApi.ts';
 import {IMessage} from 'react-native-gifted-chat';
-import Ionicons from "react-native-vector-icons/Ionicons";
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import messaging from '@react-native-firebase/messaging';
 
 const Stack = createNativeStackNavigator();
 
@@ -44,7 +51,6 @@ const getRoomsAndChannelsWithMessages = async () => {
   };
 };
 
-
 const getChannel = async (
   username: string,
   dispatch: typeof store.dispatch,
@@ -62,11 +68,27 @@ const getChannel = async (
   return (JSON.parse(storageChannel) as IChannel) || undefined;
 };
 
+async function requestUserPermission() {
+  PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
+  const authStatus = await messaging().requestPermission();
+  const enabled =
+    authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+    authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+  if (enabled) {
+    console.log('Authorization status:', authStatus);
+    return await messaging().getToken();
+  }
+}
+
 export const MainNavigator = () => {
   const token = useSelector(accessTokenSelector);
   const dispatch = useAppDispatch();
 
   useLayoutEffect(() => {
+    requestUserPermission().then(res => {
+      dispatch(channelAction.setDeviceToken(res || ''));
+    });
     getRoomsAndChannelsWithMessages().then(res => {
       dispatch(channelAction.setRoomsAndChannelsWithMessages(res));
     });
@@ -91,31 +113,30 @@ export const MainNavigator = () => {
               options={{headerShown: false}}
             />
             <Stack.Screen
-                name="Register"
-                component={RegisterScreen}
-                options={({navigation}) => ({
-                  headerShadowVisible: false,
-                  presentation: 'containedModal',
-                  title: "Регистрация",
-                  headerTitleAlign: 'center',
-                  headerTitleStyle: {fontSize: 17, fontWeight: '500'},
-                  headerStyle: {backgroundColor: '#F7F7F7',},
-                  // eslint-disable-next-line react/no-unstable-nested-components
-                  headerLeft: () => (
-                      <TouchableOpacity
-                          onPress={() => navigation.goBack()}
-                          style={styles.backContainer}
-                      >
-                        <Ionicons
-                            name="chevron-back-outline"
-                            size={28}
-                            color="#00000099"
-                            // style={styles.iconRight}
-                        />
-                        <Text style={styles.text}>Вход</Text>
-                      </TouchableOpacity>
-                  ),
-                })}
+              name="Register"
+              component={RegisterScreen}
+              options={({navigation}) => ({
+                headerShadowVisible: false,
+                presentation: 'containedModal',
+                title: 'Регистрация',
+                headerTitleAlign: 'center',
+                headerTitleStyle: {fontSize: 17, fontWeight: '500'},
+                headerStyle: {backgroundColor: '#F7F7F7'},
+                // eslint-disable-next-line react/no-unstable-nested-components
+                headerLeft: () => (
+                  <TouchableOpacity
+                    onPress={() => navigation.goBack()}
+                    style={styles.backContainer}>
+                    <Ionicons
+                      name="chevron-back-outline"
+                      size={28}
+                      color="#00000099"
+                      // style={styles.iconRight}
+                    />
+                    <Text style={styles.text}>Вход</Text>
+                  </TouchableOpacity>
+                ),
+              })}
             />
           </Stack.Navigator>
         </NavigationContainer>
@@ -131,14 +152,14 @@ const styles = StyleSheet.create({
   iconRight: {
     marginRight: 5,
   },
-  backContainer:{
+  backContainer: {
     flexDirection: 'row',
     gap: 0,
     alignItems: 'center',
     display: 'flex',
   },
-  text:{
+  text: {
     fontWeight: '400',
     fontSize: 15,
-  }
+  },
 });

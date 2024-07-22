@@ -11,11 +11,10 @@ import {useGetChannelByNickNameQuery} from '../api/channelApi.ts';
 import {useAppDispatch} from '../store';
 import {channelAction} from '../store/channel/channelSlice.ts';
 
-
-import Modal from "../wighets/Modal.tsx";
-import Search from "../shared/ui/Search.tsx";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import Button from "../shared/ui/Button.tsx";
+import Modal from '../wighets/Modal.tsx';
+import Search from '../shared/ui/Search.tsx';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Button from '../shared/ui/Button.tsx';
 import QRCode from 'react-native-qrcode-svg';
 
 const DialogsScreen: React.FC = () => {
@@ -28,13 +27,11 @@ const DialogsScreen: React.FC = () => {
     new Set(data?.port === name ? [...channels, data?.port] : channels),
   ).filter(el => el?.toLowerCase().includes(name.toLowerCase()));
 
+  const [regResponse, setRegResponse] = useState(null);
+  const [showCode, setShowCode] = useState(true);
 
-  const [regResponse, setRegResponse] = useState(null)
-  const [showCode, setShowCode] = useState(true)
-
-  const [link, setLink] = useState()
-  const [code, setCode] = useState()
-
+  const [link, setLink] = useState();
+  const [code, setCode] = useState();
 
   useEffect(() => {
     const getRecoverData = async () => {
@@ -63,32 +60,34 @@ const DialogsScreen: React.FC = () => {
     getRecoverData();
   }, []);
 
-
   return (
     <View style={styles.container}>
-      <View style={{ paddingLeft: 10, paddingRight: 10}}>
-        <Search
-            value={name}
-            onChangeText={setName}
-        />
+      <View style={{paddingLeft: 10, paddingRight: 10}}>
+        <Search value={name} onChangeText={setName} />
       </View>
-      {regResponse && showCode && ( // Проверяем наличие данных в regResponse
-          <Modal title={'Сохраните резервные коды или привяжите аккаут к Google для востановления доступа:'} >
-            <QRCode value={link}/>
+      {regResponse &&
+        showCode && ( // Проверяем наличие данных в regResponse
+          <Modal
+            title={
+              'Сохраните резервные коды или привяжите аккаут к Google для востановления доступа:'
+            }>
+            <QRCode value={link} />
             <View style={styles.codes}>
-              {code && code.map((codeItem, index) => (
-                  <Text style={{ fontSize: 17, padding: 2 }} key={index}>{codeItem}</Text>
-              ))}
+              {code &&
+                code.map((codeItem, index) => (
+                  <Text style={{fontSize: 17, padding: 2}} key={index}>
+                    {codeItem}
+                  </Text>
+                ))}
             </View>
             <Button title={'Ок'} onPress={() => setShowCode(false)} />
           </Modal>
-      )}
+        )}
       <FlatList
         data={channelsState}
         renderItem={({item}) => <RoomItem name={item} />}
         keyExtractor={item => item.toString()}
       />
-
     </View>
   );
 };
@@ -99,11 +98,9 @@ const RoomItem = ({name}: {name: string}) => {
   const {data} = useGetChannelByNickNameQuery(name);
   const {navigate} = useNavigation<any>();
 
-
   const channelsMessages = useSelector(channelsMessagesSelector);
   const currentMessages = channelsMessages[name];
   const lastMessage = currentMessages?.[0];
-
 
   const formatTime = (dateString: string) => {
     const date = new Date(dateString);
@@ -124,33 +121,28 @@ const RoomItem = ({name}: {name: string}) => {
           withoutConnection: true,
         });
       }}
-
-
       style={styles.itemContainer}>
       <View style={styles.round}>
-        <Text style={{ fontSize: 30}}>
-          {name.charAt(0).toUpperCase()}
-        </Text>
+        <Text style={{fontSize: 30}}>{name.charAt(0).toUpperCase()}</Text>
       </View>
 
       <View style={styles.preview}>
         <Text style={styles.name}>{name}</Text>
-        <Text style={styles.lastMessage}>{lastMessage?.text || " "}</Text>
+        <Text style={styles.lastMessage}>{lastMessage?.text || ' '}</Text>
       </View>
 
       <View style={styles.info}>
         <Text style={styles.date}>
-          {lastMessage ? formatTime(lastMessage?.createdAt?.toString()) : " "}
+          {lastMessage ? formatTime(lastMessage?.createdAt?.toString()) : ' '}
         </Text>
         {newMessages > 0 && (
-            <View style={styles.newMessages}>
-              <Text style={styles.newMessagesAmount}>
-                {newMessages.toString()}
-              </Text>
-            </View>
+          <View style={styles.newMessages}>
+            <Text style={styles.newMessagesAmount}>
+              {newMessages.toString()}
+            </Text>
+          </View>
         )}
       </View>
-
 
       {/*<View style={styles.deleteButton}>*/}
       {/*  <Text style={styles.deleteButtonText}>{data.ip}</Text>*/}
@@ -161,7 +153,6 @@ const RoomItem = ({name}: {name: string}) => {
       {/*    </View>*/}
       {/*  )}*/}
       {/*</View>*/}
-
     </TouchableOpacity>
   ) : null;
 };
@@ -212,23 +203,23 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 10
+    marginRight: 10,
   },
-  lastMessage:{
-    height: 40
+  lastMessage: {
+    height: 40,
   },
-  name:{
+  name: {
     fontSize: 16,
     fontWeight: '500',
-    color: '#000000E5'
+    color: '#000000E5',
   },
-  preview:{
-    width: '65%'
+  preview: {
+    width: '65%',
   },
-  info:{
-    height: '100%'
+  info: {
+    height: '100%',
   },
-  newMessages:{
+  newMessages: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -237,15 +228,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#5075F6',
     padding: 1,
     marginLeft: 38,
-    marginTop: 12
+    marginTop: 12,
   },
-  newMessagesAmount:{
-    color: '#fff'
+  newMessagesAmount: {
+    color: '#fff',
   },
   codes: {
     marginTop: 12,
-    alignItems: 'center'
-  }
+    alignItems: 'center',
+  },
 });
 
 export default DialogsScreen;
