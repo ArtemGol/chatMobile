@@ -264,23 +264,23 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 10
+    marginRight: 10,
   },
-  lastMessage:{
-    height: 40
+  lastMessage: {
+    height: 40,
   },
-  name:{
+  name: {
     fontSize: 16,
     fontWeight: '500',
-    color: '#000000E5'
+    color: '#000000E5',
   },
-  preview:{
-    width: '65%'
+  preview: {
+    width: '65%',
   },
-  info:{
-    height: '100%'
+  info: {
+    height: '100%',
   },
-  newMessages:{
+  newMessages: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -289,10 +289,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#5075F6',
     padding: 1,
     marginLeft: 38,
-    marginTop: 12
+    marginTop: 12,
   },
-  newMessagesAmount:{
-    color: '#fff'
+  newMessagesAmount: {
+    color: '#fff',
   },
   codes: {
     marginTop: 12,

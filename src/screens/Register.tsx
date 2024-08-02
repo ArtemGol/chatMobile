@@ -1,19 +1,18 @@
 import React, {useEffect, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {Input} from '../components/Input';
-import ButtonLogin from '../components/ButtonLogin';
-import Button, {ButtonTheme, TextSize, TextTheme} from "../shared/ui/Button.tsx";
+import Button from '../shared/ui/Button.tsx';
 import {useRegisterMutation} from '../api/authApi.ts';
 import {validationFunk} from '../assets/utils/validationFunk.ts';
 import {useAppDispatch} from '../store';
 import {channelApi} from '../api/channelApi.ts';
-import {generateID} from '../assets/constants/generatedId.ts';
-import Modal from "../wighets/Modal.tsx";
 
-import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useSelector} from 'react-redux';
+import {deviceTokenSelector} from '../store/channel/channelSelector.ts';
 
 const Register = () => {
+  const deviceToken = useSelector(deviceTokenSelector);
   const dispatch = useAppDispatch();
   const [register] = useRegisterMutation();
   const [username, setUsername] = useState('');
@@ -63,15 +62,20 @@ const Register = () => {
       setNicknameError(nicknameVal);
     } else {
       try {
-        const user = await register({ username, phone, email, password }).unwrap();
+        const user = await register({
+          username,
+          phone,
+          email,
+          password,
+        }).unwrap();
         await AsyncStorage.setItem('reg_response', JSON.stringify(user.result));
         const userName = user.requestParams.username;
         if (userName) {
           dispatch(
-              channelApi.endpoints.addChannel.initiate({
-                ip: generateID(),
-                port: userName,
-              })
+            channelApi.endpoints.addChannel.initiate({
+              ip: deviceToken ?? '',
+              port: userName,
+            }),
           );
         }
       } catch (err) {
@@ -82,13 +86,17 @@ const Register = () => {
 
   useEffect(() => {
     checkInputs();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [username, password, email, phone]);
 
   const checkInputs = () => {
-    if (username.length > 0 &&
-        password.length > 0 &&
-        phone.length > 0 &&
-        email.length > 0) {
+    if (
+      username.length > 0 &&
+      password.length > 0 &&
+      phone.length > 0 &&
+      email.length > 0
+    ) {
       setIsButtonDisabled(false);
     } else {
       setIsButtonDisabled(true);
@@ -115,7 +123,7 @@ const Register = () => {
           placeholder="номер телефона"
           keyboardType="phone-pad"
           innerPlaceholder={'Введите номер телефона'}
-          lowerCaption={"Не обязательно для заполнения"}
+          lowerCaption={'Не обязательно для заполнения'}
           value={phone}
           onChangeText={text => {
             setPhone(text);
@@ -127,7 +135,9 @@ const Register = () => {
         <Input
           type={'labelUp'}
           placeholder="email"
-          lowerCaption={"По email можно восстановить доступ к аккаунту.                      Не обязательно для заполнения"}
+          lowerCaption={
+            'По email можно восстановить доступ к аккаунту.                      Не обязательно для заполнения'
+          }
           innerPlaceholder={'Введите email'}
           keyboardType="email-address"
           value={email}
@@ -142,7 +152,6 @@ const Register = () => {
           type={'labelDown'}
           eye={true}
           innerPlaceholder={'Придумайте пароль'}
-
           value={password}
           onChangeText={text => {
             setPassword(text);
@@ -152,9 +161,9 @@ const Register = () => {
           secureTextEntry
         />
         <Button
-            title={'Регистрация'}
-            onPress={handleRegister}
-            disabled={isButtonDisabled}
+          title={'Регистрация'}
+          onPress={handleRegister}
+          disabled={isButtonDisabled}
         />
       </View>
     </View>
