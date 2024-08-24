@@ -33,6 +33,7 @@ function Profile() {
 
   const handleLogout = () => {
     dispatch(channelAction.clearChannelsWithMessages());
+    dispatch(channelAction.setChannel(undefined));
     dispatch(channelAction.clearNewMessages());
     dispatch(authAction.logout());
     socketRef.current?.disconnect();
@@ -74,13 +75,9 @@ function Profile() {
           <Text style={styles.messageButtonText}>изменить данные</Text>
         </TouchableOpacity>
         <TouchableOpacity
-            style={styles.messageButton}
-            onPress={() => navigation.navigate('Security')}>
-          <Ionicons
-              style={styles.iconStyle}
-              name="shield-outline"
-              size={24}
-          />
+          style={styles.messageButton}
+          onPress={() => navigation.navigate('Security')}>
+          <Ionicons style={styles.iconStyle} name="shield-outline" size={24} />
           <Text style={styles.messageButtonText}>Безопасность</Text>
         </TouchableOpacity>
         <TouchableOpacity

@@ -58,7 +58,7 @@ export const {actions: channelAction, reducer: channelReducer} = createSlice({
     setConnection: (state, {payload}: PayloadAction<Socket<any>>) => {
       state.connection = payload;
     },
-    setChannel: (state, {payload}: PayloadAction<IChannel>) => {
+    setChannel: (state, {payload}: PayloadAction<IChannel | undefined>) => {
       state.channel = payload;
     },
     setChannelsWithMessages: (

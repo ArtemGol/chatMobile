@@ -125,7 +125,7 @@ const GiftedChatScreen = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          token,
+          token: token.split('&&==&&')[0],
           title,
           body,
         }),
