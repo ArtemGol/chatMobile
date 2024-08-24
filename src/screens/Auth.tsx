@@ -15,6 +15,7 @@ import Button, {
 } from '../shared/ui/Button.tsx';
 import {useSelector} from 'react-redux';
 import {deviceTokenSelector} from '../store/channel/channelSelector.ts';
+import {generateID} from '../assets/constants/generatedId.ts';
 
 const AuthScreen = () => {
   const deviceToken = useSelector(deviceTokenSelector);
@@ -51,10 +52,13 @@ const AuthScreen = () => {
         const existChannel = await dispatch(
           channelApi.endpoints.getChannelByNickName.initiate(userName),
         );
-        if (!existChannel.data?.ip || deviceToken !== existChannel.data?.ip) {
+
+        if (!existChannel.data?.ip) {
+          const ip = `${deviceToken}&&==&&${generateID()}` ?? '';
+          dispatch(channelAction.setChannel({port: userName, ip}));
           dispatch(
             channelApi.endpoints.addChannel.initiate({
-              ip: deviceToken ?? '',
+              ip: `${deviceToken}&&==&&${generateID()}` ?? '',
               port: userName,
             }),
           );

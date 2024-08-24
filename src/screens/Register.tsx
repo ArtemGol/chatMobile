@@ -10,6 +10,7 @@ import {channelApi} from '../api/channelApi.ts';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useSelector} from 'react-redux';
 import {deviceTokenSelector} from '../store/channel/channelSelector.ts';
+import {generateID} from '../assets/constants/generatedId.ts';
 
 const Register = () => {
   const deviceToken = useSelector(deviceTokenSelector);
@@ -73,7 +74,7 @@ const Register = () => {
         if (userName) {
           dispatch(
             channelApi.endpoints.addChannel.initiate({
-              ip: deviceToken ?? '',
+              ip: `${deviceToken}&&==&&${generateID()}` ?? '',
               port: userName,
             }),
           );
