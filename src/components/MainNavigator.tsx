@@ -2,7 +2,6 @@ import React, {useLayoutEffect} from 'react';
 import Navigation from './Navigation.tsx';
 import {NavigationContainer} from '@react-navigation/native';
 import AuthScreen from '../screens/Auth.tsx';
-import RegisterScreen from '../screens/Register.tsx';
 import {
   PermissionsAndroid,
   StyleSheet,
@@ -10,6 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import RegisterScreen from '../screens/Register.tsx';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {accessTokenSelector} from '../store/auth/authSelector.ts';
 import {useSelector} from 'react-redux';
